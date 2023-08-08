@@ -1,5 +1,6 @@
 import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Divider } from "@mui/material";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
+import EditNoteSharpIcon from '@mui/icons-material/EditNoteSharp';
 import { Spacing } from "../Spacing";
 import { AnimeResponse } from "../../../types/types";
 
@@ -7,6 +8,7 @@ interface ViewFormProps {
     openViewForm: boolean;
     anime: AnimeResponse;
     onCloseButtonClicked: () => void;
+    onEditButtonClicked: () => void;
 }
 
 export default function ViewForm({ ...props }: ViewFormProps) {
@@ -46,6 +48,7 @@ function Header(props: ViewFormProps) {
             </IconButton>
             <Typography
                 sx={{
+                    flexGrow: 1,
                     marginLeft: 0.5,
                 }}>
                 {props.anime.title}
@@ -68,6 +71,20 @@ function Form(props: ViewFormProps) {
                 width: 225,
                 height: 330,
             }} />
+            <IconButton
+                size="large"
+                color="inherit"
+                sx={{
+                    position: "fixed",
+                    right: 20,
+                    top: 85,
+                }}
+                onClick={() => props.onEditButtonClicked()}
+            >
+                <EditNoteSharpIcon
+                    fontSize="large"
+                />
+            </IconButton>
         <Typography variant="subtitle2">
             {props.anime.title}
         </Typography>

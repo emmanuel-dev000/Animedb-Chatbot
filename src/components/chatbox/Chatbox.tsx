@@ -373,6 +373,11 @@ export default function Chatbox() {
                     setChatboxState(ChatboxState.IDLE);
                     handleCloseViewForm();
                 }}
+                onEditButtonClicked={() => {
+                    handleCloseViewForm();
+                    setChatboxState(ChatboxState.EDIT);
+                    handleOpenEditForm();
+                }}
                 anime={{
                     id: animeId,
                     title: animeTitle,
