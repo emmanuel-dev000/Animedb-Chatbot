@@ -228,6 +228,17 @@ export default function Chatbox() {
         );
     }
 
+    function AddAiDeleteMessageboxToMessageList(deleteMessage: string) {
+        AddMessageToList(
+            <AiMessagebox 
+                key={ "AnimeDelete" + RandomId() }
+                avatarType={ AvatarType.HAPPY }
+                createdAt={ Now() }
+                text={ deleteMessage }
+            /> 
+        );
+    }
+
     return (
         <Box
             sx={{
@@ -400,6 +411,7 @@ export default function Chatbox() {
                 setAnimeSynopsis={setAnimeSynopsis}
                 setAnimeTitle={setAnimeTitle}
                 chatboxState={chatboxState}
+                onDeleteSuccess={AddAiDeleteMessageboxToMessageList}
                 onCloseEditForm={() => {
                     setChatboxState(ChatboxState.IDLE);
                     handleCloseEditForm();

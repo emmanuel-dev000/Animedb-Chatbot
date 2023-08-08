@@ -1,6 +1,7 @@
 import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Button, TextField } from "@mui/material";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
-import { EditAnimeById, GetAnimeImageDetailById } from "../../../hooks/HttpAnime";
+import DeleteForeverSharpIcon from '@mui/icons-material/DeleteForeverSharp';
+import { DeleteAnimeById, EditAnimeById, GetAnimeImageDetailById } from "../../../hooks/HttpAnime";
 import { ChatboxState } from "../../../types/enums";
 import { AnimeImageDetail, AnimeRequest, AnimeResponse } from "../../../types/types";
 import { Spacing } from "../Spacing";
@@ -13,7 +14,8 @@ interface EditFormProps {
     DisableSendButton: () => void; 
     onCloseEditForm: () => void; 
     onEditError: () => void; 
-    onEditSuccess: (animeImageDetail: AnimeImageDetail) => void; 
+    onEditSuccess: (animeImageDetail: AnimeImageDetail) => void;
+    onDeleteSuccess: (deleteMessage: string) => void; 
     setAnimeTitle: React.Dispatch<React.SetStateAction<string>>; 
     setAnimeStudio: React.Dispatch<React.SetStateAction<string>>; 
     setAnimeEpisodes: React.Dispatch<React.SetStateAction<number>>; 
@@ -303,5 +305,29 @@ function Form({ ...props }: EditFormProps) {
             sx={{
                 marginY: 1,
             }} />
+
+        <Spacing />
+
+        <Typography
+            variant="button"
+            display="block"
+            gutterBottom>
+            Danger Zone
+        </Typography>
+        <Button
+            variant="contained"
+            color="error"
+            fullWidth
+            endIcon={ <DeleteForeverSharpIcon /> }
+            onClick={async () => {
+                const deleteMessage = await DeleteAnimeById(props.anime.id);
+                if (deleteMessage) {
+                    props.onDeleteSuccess(deleteMessage);
+                }
+
+                props.onCloseEditForm();
+            }}>
+                Delete
+        </Button>
     </Box>;
 }
