@@ -1,4 +1,4 @@
-import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Divider } from "@mui/material";
+import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Divider, Chip } from "@mui/material";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import EditNoteSharpIcon from '@mui/icons-material/EditNoteSharp';
 import { Spacing } from "../Spacing";
@@ -197,41 +197,51 @@ function Form(props: ViewFormProps) {
             variant="button"
             display="block"
             gutterBottom>
-            TAGS
+            TAGS { (props.anime.tagList.length <= 0) ? "(Empty)" : "" }
         </Typography>
-        <Typography
-            variant="subtitle1"
-            gutterBottom
-            sx={{
-                fontSize: 14,
-            }}>
-            {props.anime.tagList.map(tag => {
-                const tagListLength = props.anime.tagList.length;
-                const lastId = props.anime.tagList[tagListLength - 1].id;
-                return (lastId === tag.id)
-                    ? ` ${tag.name}` : ` ${tag.name},`;
-            })}
-        </Typography>
+        {
+            // Tags
+            props.anime.tagList.map(tag => {
+                return <Chip
+                            color="info"
+                            key={ tag.id }
+                            size="small" 
+                            label={ tag.name }
+                            sx={{
+                                marginX: 0.25,
+                            }} 
+                            onClick={() => {
+                                alert(tag.id + " " + tag.name)}
+                            } />;
+        })}
 
         <Typography
             variant="button"
             display="block"
             gutterBottom>
-            GENRES
+            GENRES { (props.anime.genreList.length <= 0) ? "(Empty)" : "" }
         </Typography>
         <Typography
-            variant="subtitle1"
-            gutterBottom
-            sx={{
-                fontSize: 14,
-            }}>
-            {props.anime.genreList.map(genre => {
-                const genreListLength = props.anime.genreList.length;
-                const lastId = props.anime.genreList[genreListLength - 1].id;
-                return (lastId === genre.id)
-                    ? ` ${genre.name}` : ` ${genre.name},`;
-            })}
+            variant="button"
+            display="block"
+            gutterBottom>
+            
         </Typography>
+        {
+            // Genres
+            props.anime.genreList.map(genre => {
+                return <Chip
+                            color="info"
+                            key={ genre.id }
+                            size="small" 
+                            label={ genre.name }
+                            sx={{
+                                marginX: 0.25,
+                            }}
+                            onClick={() => {
+                                alert(genre.id + " " + genre.name)}
+                            } />;
+        })}
 
         <Spacing />
 
