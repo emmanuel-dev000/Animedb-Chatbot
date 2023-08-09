@@ -6,7 +6,7 @@ import Header from "./Header";
 import { Now } from "../../datetime/DateTime";
 import { AvatarType, ChatboxState } from "../../types/enums";
 import React from "react";
-import { ANIME_ADDED_SUCCESS_MESSAGE, ANIME_DELETE_SUCCESS_MESSAGE, EDIT_FORM_YESNO_MESSAGE, RandomApology } from "./ai/messages";
+import { ANIME_ADDED_SUCCESS_MESSAGE, ANIME_DELETE_SUCCESS_MESSAGE, ANIME_UPDATED_SUCCESS_MESSAGE, EDIT_FORM_YESNO_MESSAGE, RandomApology } from "./ai/messages";
 import RandomId from "./utilities/RandomId";
 import ViewForm from "./forms/ViewForm";
 import InputForm from "./forms/InputForm";
@@ -201,6 +201,11 @@ export default function Chatbox() {
                     handleOpenViewForm();
             }}/>
         );
+    }
+
+    function OnEditSuccess(animeImage: AnimeImageDetail) {
+        AddAiMessageboxToMessageList(ANIME_UPDATED_SUCCESS_MESSAGE, AvatarType.HAPPY);
+        AddAiAnimeImageToMessageList(animeImage);
     }
 
     function AddAddRequestMessageboxToMessageList() {
@@ -401,7 +406,7 @@ export default function Chatbox() {
                 openEditForm={openEditForm}
                 handleCloseEditForm={handleCloseEditForm}
                 onEditError={() => alert("Error")}
-                onEditSuccess={AddAiAnimeImageToMessageList}
+                onEditSuccess={OnEditSuccess}
                 DisableSendButton={DisableSendButton}
                 setAnimeDateAired={setAnimeDateAired}
                 setAnimeDateFinished={setAnimeDateFinished}
@@ -431,7 +436,7 @@ export default function Chatbox() {
                     synopsis: animeSynopsis,
                     japaneseTitle: animeJapaneseTitle,
                     japaneseTitleHiragana: animeJapaneseTitleHiragana,
-                    japaneseSynopsis: animeSynopsis,
+                    japaneseSynopsis: animeJapaneseSynopsis,
                     dateAired: animeDateAired,
                     dateFinished: animeDateFinished,
                     episodes: animeEpisodes,

@@ -91,7 +91,7 @@ function Header({ ...props }: EditFormProps ) {
 
                         japaneseTitle: props.anime.japaneseTitle,
                         japaneseTitleHiragana: props.anime.japaneseTitleHiragana,
-                        japaneseSynopsis: props.anime.synopsis
+                        japaneseSynopsis: props.anime.japaneseSynopsis
                     };
 
                     if (props.chatboxState === ChatboxState.EDIT) {
