@@ -1,10 +1,13 @@
-import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Button, TextField } from "@mui/material";
+import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Button, TextField, FormGroup, Checkbox, FormControlLabel } from "@mui/material";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import DeleteForeverSharpIcon from '@mui/icons-material/DeleteForeverSharp';
 import { DeleteAnimeById, EditAnimeById, GetAnimeImageDetailById } from "../../../hooks/HttpAnime";
 import { ChatboxState } from "../../../types/enums";
-import { AnimeImageDetail, AnimeRequest, AnimeResponse } from "../../../types/types";
+import { AnimeImageDetail, AnimeRequest, AnimeResponse, Tag } from "../../../types/types";
 import { Spacing } from "../Spacing";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { UpdateTagListInAnimeById } from "../../../hooks/HttpTag";
 
 interface EditFormProps {
     openEditForm: boolean; 
@@ -31,6 +34,16 @@ interface EditFormProps {
 }
 
 export default function EditForm({ ...props } : EditFormProps) {
+    const [tagList, setTagList] = useState<Array<Tag>>([]);
+    const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
+
+    useEffect(() => {
+        axios.get("http://localhost:8080/api/v1/tags")
+            .then(res => {
+                setTagList(res.data);
+            });
+    }, [tagList]);
+    
     return (
         <Slide
             direction="up"
@@ -47,15 +60,15 @@ export default function EditForm({ ...props } : EditFormProps) {
                     position: "fixed",
                 }}
             >
-                { Header(props)}
+                { Header(props, selectedTagList) }
 
-                {Form(props)}
+                { Form(props, tagList, selectedTagList, setSelectedTagList) }
             </Box>
         </Slide>
     );
 }
 
-function Header({ ...props }: EditFormProps ) {
+function Header({ ...props }: EditFormProps, selectedTagList: Array<Tag> ) {
     return <AppBar position="static">
         <Toolbar>
             <IconButton
@@ -101,6 +114,12 @@ function Header({ ...props }: EditFormProps ) {
                             return;
                         }
 
+                        const updateTagAnimeResponse = await UpdateTagListInAnimeById(props.anime.id, selectedTagList);
+                        if (updateTagAnimeResponse == null) {
+                            props.onEditError();
+                            return;
+                        }
+
                         const animeImageDetail = await GetAnimeImageDetailById(props.anime.id);
                         props.onEditSuccess(animeImageDetail);
                     }
@@ -114,7 +133,12 @@ function Header({ ...props }: EditFormProps ) {
     </AppBar>;
 }
 
-function Form({ ...props }: EditFormProps) {
+function Form(
+    { ...props }: EditFormProps,
+    tagList: Array<Tag>,
+    selectedTagList: Array<Tag>,
+    setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>,
+    ) {
     return <Box
         sx={{
             marginTop: 2,
@@ -312,6 +336,56 @@ function Form({ ...props }: EditFormProps) {
             variant="button"
             display="block"
             gutterBottom>
+            Tags
+        </Typography>
+        <FormGroup row>
+        {
+            tagList.map((tag) => {
+                return (
+                    <FormControlLabel
+                        key={ tag.id }
+                        label={ tag.name } 
+                        control={
+                            <Checkbox 
+                                defaultChecked = { IsTagIncluded(props.anime.tagList, tag) }
+                                onChange={(e) => {
+                                    if (e.target.checked) {
+                                        selectedTagList.push(tag);
+                                        setSelectedTagList(selectedTagList);
+                                    }
+
+                                    if (!e.target.checked) {
+                                        const index = FindIndex(selectedTagList, tag);
+                                        if (index === undefined) {
+                                            alert("Undefined");
+                                            return;
+                                        }
+
+                                        const REMOVE_ONE_ELEMENT_ONLY = 1;
+                                        selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                        setSelectedTagList(selectedTagList);
+                                    }
+
+                                    console.log("------UPDATED-----");
+                                    console.log(" ");
+                                    selectedTagList.map(tag => {
+                                        console.log(tag.id + " " + tag.name );
+                                    });
+                                    console.log(" ");
+                                    console.log("------END-----");
+                                }}
+                            />
+                        } 
+                    />
+                );
+            })
+        }
+        </FormGroup>
+
+        <Typography
+            variant="button"
+            display="block"
+            gutterBottom>
             Danger Zone
         </Typography>
         <Button
@@ -330,4 +404,26 @@ function Form({ ...props }: EditFormProps) {
                 Delete
         </Button>
     </Box>;
+}
+
+function IsTagIncluded(tagList: Array<Tag>, tag: Tag) : boolean {
+    for (let index = 0; index < tagList.length; index++) {
+        const t = tagList[index];
+        if (t.id === tag.id) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function FindIndex(tagList: Array<Tag>, tag: Tag) : number | undefined {
+    for (let index = 0; index < tagList.length; index++) {
+        const t = tagList[index];
+        if (t.id === tag.id) {
+            return index;
+        }
+    }
+
+    return undefined;
 }

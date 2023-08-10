@@ -79,7 +79,6 @@ export default function InputForm({ ...props }: InputFormProps) {
                             japaneseSynopsis: animeJapaneseSynopsis,
                         },
                         selectedTagList
-                        // selectedTagList,
                         // selectedGenreList,
                     )
                 }
@@ -200,7 +199,6 @@ function Form(
     tagList: Array<Tag>,
     selectedTagList: Array<Tag>,
     setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>,
-    // setSelectedGenreList: React.Dispatch<React.SetStateAction<Array<Genre>>>,
     ) {
     return <Box
         sx={{
@@ -409,40 +407,42 @@ function Form(
             <FormGroup row>
             {
                 tagList.map((tag) => {
-                    return <FormControlLabel
-                                key={ tag.id }
-                                label={ tag.name } 
-                                control={
-                                    <Checkbox 
-                                        onChange={(e) => {
-                                            if (e.target.checked) {
-                                                selectedTagList.push(tag);
-                                                setSelectedTagList(selectedTagList);
+                    return (
+                        <FormControlLabel
+                            key={ tag.id }
+                            label={ tag.name } 
+                            control={
+                                <Checkbox 
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            selectedTagList.push(tag);
+                                            setSelectedTagList(selectedTagList);
+                                        }
+
+                                        if (!e.target.checked) {
+                                            const index = FindIndex(selectedTagList, tag);
+                                            if (index === undefined) {
+                                                alert("Undefined");
+                                                return;
                                             }
 
-                                            if (!e.target.checked) {
-                                                const index = FindIndex(selectedTagList, tag);
-                                                if (index === undefined) {
-                                                    alert("Undefined");
-                                                    return;
-                                                }
+                                            const REMOVE_ONE_ELEMENT_ONLY = 1;
+                                            selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                            setSelectedTagList(selectedTagList);
+                                        }
 
-                                                const REMOVE_ONE_ELEMENT_ONLY = 1;
-                                                selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
-                                                setSelectedTagList(selectedTagList);
-                                            }
-
-                                            console.log("------UPDATED-----");
-                                            console.log(" ");
-                                            selectedTagList.map(tag => {
-                                                console.log(tag.id + " " + tag.name );
-                                            });
-                                            console.log(" ");
-                                            console.log("------END-----");
-                                        }}
-                                    />
-                                } 
-                            />;
+                                        console.log("------UPDATED-----");
+                                        console.log(" ");
+                                        selectedTagList.map(tag => {
+                                            console.log(tag.id + " " + tag.name );
+                                        });
+                                        console.log(" ");
+                                        console.log("------END-----");
+                                    }}
+                                />
+                            } 
+                        />
+                    );
                 })
             }
             </FormGroup>
