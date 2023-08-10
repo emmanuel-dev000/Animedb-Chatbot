@@ -59,8 +59,8 @@ export default function Chatbox() {
                     SetAnimeInputs(res.data)
                 })
                 .catch(err => alert(err));
-      }, [animeId]);
-
+    }, [animeId]);
+        
     function EnableSendButton() {
         setSendButtonDisabled(false);
     }
@@ -351,8 +351,7 @@ export default function Chatbox() {
 
             <InputForm
                 openInputForm={openInputForm}
-                header={chatboxState === ChatboxState.ADD ? "Add something" : "Edit"} 
-                animeId={animeId} 
+                header={ "Add" } 
                 chatboxState={chatboxState}
                 onCloseButtonClicked = {() => {
                     setChatboxState(ChatboxState.IDLE);

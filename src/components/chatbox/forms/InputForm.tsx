@@ -1,15 +1,16 @@
-import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Button, TextField } from "@mui/material";
+import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Button, TextField, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import { AddNewAnime } from "../../../hooks/HttpAnime";
 import { ChatboxState } from "../../../types/enums";
-import { AnimeRequest } from "../../../types/types";
+import { AnimeRequest, Tag } from "../../../types/types";
 import { Spacing } from "../Spacing";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { UpdateTagListInAnimeById } from "../../../hooks/HttpTag";
 
 interface InputFormProps {
     openInputForm: boolean;
     header: string;
-    animeId: string;
     chatboxState: ChatboxState;
     onCloseButtonClicked: () => void;
     onSaveAnimeSuccess: () => void;
@@ -31,7 +32,17 @@ export default function InputForm({ ...props }: InputFormProps) {
     const [animeJapaneseTitle, setAnimeJapaneseTitle] = useState<string>("");
     const [animeJapaneseTitleHiragana, setAnimeJapaneseTitleHiragana] = useState<string>("");
     const [animeJapaneseSynopsis, setAnimeJapaneseSynopsis] = useState<string>("");
+    
+    const [tagList, setTagList] = useState<Array<Tag>>([]);
+    const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
 
+    useEffect(() => {
+        axios.get("http://localhost:8080/api/v1/tags")
+            .then(res => {
+                setTagList(res.data);
+            });
+    }, [tagList]);
+    
     return (
         <Slide
             direction="up"
@@ -51,18 +62,25 @@ export default function InputForm({ ...props }: InputFormProps) {
                 { 
                     Header(
                         props, 
-                        animeTitle, 
-                        animeRating, 
-                        animeStudio, 
-                        animeEpisodes, 
-                        animeDuration, 
-                        animeImageUrl, 
-                        animeSynopsis, 
-                        animeDateAired, 
-                        animeDateFinished, 
-                        animeJapaneseTitle, 
-                        animeJapaneseTitleHiragana, 
-                        animeJapaneseSynopsis
+                        {
+                            title: animeTitle,
+                            rating: animeRating,
+                            studio: animeStudio,
+                            episodes: animeEpisodes,
+                            duration: animeDuration,
+                            imageUrl: animeImageUrl,
+                            synopsis: animeSynopsis,
+
+                            dateAired: animeDateAired,
+                            dateFinished: animeDateFinished,
+
+                            japaneseTitle: animeJapaneseTitle,
+                            japaneseTitleHiragana: animeJapaneseTitleHiragana,
+                            japaneseSynopsis: animeJapaneseSynopsis,
+                        },
+                        selectedTagList
+                        // selectedTagList,
+                        // selectedGenreList,
                     )
                 }
 
@@ -91,7 +109,10 @@ export default function InputForm({ ...props }: InputFormProps) {
                         animeSynopsis, 
                         setAnimeSynopsis, 
                         animeJapaneseSynopsis, 
-                        setAnimeJapaneseSynopsis
+                        setAnimeJapaneseSynopsis,
+                        tagList,
+                        selectedTagList,
+                        setSelectedTagList
                     )}
             </Box>
         </Slide>
@@ -99,7 +120,12 @@ export default function InputForm({ ...props }: InputFormProps) {
 }
 
 
-function Header(props: { openInputForm: boolean; header: string; animeId: string; chatboxState: ChatboxState; onCloseButtonClicked: () => void; onSaveAnimeSuccess: () => void; onSaveStateAdd:  () => void; }, animeTitle: string, animeRating: number, animeStudio: string, animeEpisodes: number, animeDuration: string, animeImageUrl: string, animeSynopsis: string, animeDateAired: string, animeDateFinished: string, animeJapaneseTitle: string, animeJapaneseTitleHiragana: string, animeJapaneseSynopsis: string) {
+function Header(
+    { ...props } : InputFormProps, 
+    anime: AnimeRequest,
+    selectedTagList: Array<Tag>,
+    // selectedGenreList: Array<Genre>,
+    ) {
     return (
         <AppBar position="static">
             <Toolbar>
@@ -120,27 +146,15 @@ function Header(props: { openInputForm: boolean; header: string; animeId: string
                 <Button
                     color="inherit"
                     onClick={async () => {
-
-                        const anime: AnimeRequest = {
-                            title: animeTitle,
-                            rating: animeRating,
-                            studio: animeStudio,
-                            episodes: animeEpisodes,
-                            duration: animeDuration,
-                            imageUrl: animeImageUrl,
-                            synopsis: animeSynopsis,
-
-                            dateAired: animeDateAired,
-                            dateFinished: animeDateFinished,
-
-                            japaneseTitle: animeJapaneseTitle,
-                            japaneseTitleHiragana: animeJapaneseTitleHiragana,
-                            japaneseSynopsis: animeJapaneseSynopsis
-                        };
-                        
                         if (props.chatboxState === ChatboxState.ADD) {
                             const animeResponse = await AddNewAnime(anime);
                             if (animeResponse == null) {
+                                alert("Error");
+                                return;
+                            }
+
+                            const tagListAddResponse = await UpdateTagListInAnimeById(animeResponse.id, selectedTagList);
+                            if (tagListAddResponse == null) {
                                 alert("Error");
                                 return;
                             }
@@ -182,7 +196,11 @@ function Form(
     animeSynopsis: string, 
     setAnimeSynopsis: React.Dispatch<React.SetStateAction<string>>,
     animeJapaneseSynopsis: string, 
-    setAnimeJapaneseSynopsis: React.Dispatch<React.SetStateAction<string>>
+    setAnimeJapaneseSynopsis: React.Dispatch<React.SetStateAction<string>>,
+    tagList: Array<Tag>,
+    selectedTagList: Array<Tag>,
+    setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>,
+    // setSelectedGenreList: React.Dispatch<React.SetStateAction<Array<Genre>>>,
     ) {
     return <Box
         sx={{
@@ -378,5 +396,89 @@ function Form(
             sx={{
                 marginY: 1,
             }} />
+
+            <Spacing />
+
+            {/* TAGS */}
+            <Typography
+                variant="button"
+                display="block"
+                gutterBottom>
+                Tags
+            </Typography>
+            <FormGroup row>
+            {
+                tagList.map((tag) => {
+                    return <FormControlLabel
+                                key={ tag.id }
+                                label={ tag.name } 
+                                control={
+                                    <Checkbox 
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                selectedTagList.push(tag);
+                                                setSelectedTagList(selectedTagList);
+                                            }
+
+                                            if (!e.target.checked) {
+                                                const index = FindIndex(selectedTagList, tag);
+                                                if (index === undefined) {
+                                                    alert("Undefined");
+                                                    return;
+                                                }
+
+                                                const REMOVE_ONE_ELEMENT_ONLY = 1;
+                                                selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                                setSelectedTagList(selectedTagList);
+                                            }
+
+                                            console.log("------UPDATED-----");
+                                            console.log(" ");
+                                            selectedTagList.map(tag => {
+                                                console.log(tag.id + " " + tag.name );
+                                            });
+                                            console.log(" ");
+                                            console.log("------END-----");
+                                        }}
+                                    />
+                                } 
+                            />;
+                })
+            }
+            </FormGroup>
+            {/* GENRES */}
+            <Typography
+                variant="button"
+                display="block"
+                gutterBottom>
+                Genres
+            </Typography>
+            <FormGroup>
+            {/* {
+                animeGenreList.map((genre) => {
+                    return <FormControlLabel 
+                                label={ genre.name } 
+                                control={<Checkbox 
+                                            defaultChecked 
+                                            onClick={() => {
+                                                selectedGenreList.push(genre);
+                                                setSelectedGenreList(selectedGenreList);
+                                            }}/>
+                                        } 
+                            />;
+                })
+            } */}
+            </FormGroup>
     </Box>;
+}
+
+function FindIndex(tagList: Array<Tag>, tag: Tag) : number | undefined {
+    for (let index = 0; index < tagList.length; index++) {
+        const t = tagList[index];
+        if (t.id === tag.id) {
+            return index;
+        }
+    }
+
+    return undefined;
 }
