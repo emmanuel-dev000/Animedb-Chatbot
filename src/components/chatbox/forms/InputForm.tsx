@@ -78,8 +78,8 @@ export default function InputForm({ ...props }: InputFormProps) {
                             japaneseTitleHiragana: animeJapaneseTitleHiragana,
                             japaneseSynopsis: animeJapaneseSynopsis,
                         },
-                        selectedTagList
-                        // selectedGenreList,
+                        selectedTagList,
+                        setSelectedTagList
                     )
                 }
 
@@ -123,7 +123,7 @@ function Header(
     { ...props } : InputFormProps, 
     anime: AnimeRequest,
     selectedTagList: Array<Tag>,
-    // selectedGenreList: Array<Genre>,
+    setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>
     ) {
     return (
         <AppBar position="static">
@@ -131,7 +131,10 @@ function Header(
                 <IconButton
                     color="inherit"
                     edge="start"
-                    onClick={() => props.onCloseButtonClicked()}
+                    onClick={() => {
+                        props.onCloseButtonClicked();
+                        setSelectedTagList([]);
+                    }}
                 >
                     <CloseSharpIcon />
                 </IconButton>
@@ -162,7 +165,7 @@ function Header(
                         }
 
                         props.onSaveAnimeSuccess();
-                        return;
+                        setSelectedTagList([]);
                     }}>
                     Save
                 </Button>
@@ -200,276 +203,278 @@ function Form(
     selectedTagList: Array<Tag>,
     setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>,
     ) {
-    return <Box
-        sx={{
-            marginTop: 2,
-            padding: 2,
-            maxHeight: 650,
-            overflowY: "scroll",
-        }}>
+    return (
+        <Box
+            sx={{
+                marginTop: 2,
+                padding: 2,
+                maxHeight: 650,
+                overflowY: "scroll",
+            }}>
 
-        {/* BASIC DETAILS */}
-        <Typography
-            variant="button"
-            display="block"
-            gutterBottom>
-            Basic Details
-        </Typography>
-        <TextField
-            label="Title"
-            variant="standard"
-            autoFocus
-            fullWidth
-            id="animeTitle"
-            value={animeTitle}
-            onChange={e => setAnimeTitle(e.target.value)}
-            sx={{
-                marginY: 1,
-            }} />
-        <TextField
-            label="Studio"
-            variant="standard"
-            fullWidth
-            id="animeStudio"
-            value={animeStudio}
-            onChange={e => {
-                setAnimeStudio(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-        <TextField
-            label="Episodes"
-            type="number"
-            variant="standard"
-            fullWidth
-            id="animeEpisodes"
-            value={animeEpisodes}
-            onChange={e => {
-                setAnimeEpisodes(Number.parseInt(e.target.value));
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-        <TextField
-            label="Duration"
-            variant="standard"
-            fullWidth
-            id="animeDuration"
-            value={animeDuration}
-            onChange={e => {
-                setAnimeDuration(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-        <TextField
-            label="Rating"
-            type="number"
-            variant="standard"
-            fullWidth
-            id="animeRating"
-            value={animeRating}
-            onChange={e => {
-                setAnimeRating(Number.parseInt(e.target.value));
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-        <TextField
-            label="Image URL"
-            variant="standard"
-            fullWidth
-            id="animeImageUrl"
-            value={animeImageUrl}
-            onChange={e => {
-                setAnimeImageUrl(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-
-        <Spacing />
-
-        {/* JAPANESE */}
-        <Typography
-            variant="button"
-            display="block"
-            gutterBottom>
-            Japanese
-        </Typography>
-        <TextField
-            label="Japanese Title"
-            variant="standard"
-            fullWidth
-            id="animeJapaneseTitle"
-            value={animeJapaneseTitle}
-            onChange={e => {
-                setAnimeJapaneseTitle(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-        <TextField
-            label="Japanese Title Hiragana"
-            variant="standard"
-            fullWidth
-            id="animeJapaneseTitleHiragana"
-            value={animeJapaneseTitleHiragana}
-            onChange={e => {
-                setAnimeJapaneseTitleHiragana(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-
-        <Spacing />
-
-        {/* DATE AIRED AND FINISHED */}
-        <Typography
-            variant="button"
-            display="block"
-            gutterBottom>
-            Date Aired and Finished
-        </Typography>
-        <TextField
-            label="Date Aired"
-            variant="standard"
-            fullWidth
-            id="animeDateAired"
-            value={animeDateAired}
-            onChange={e => {
-                setAnimeDateAired(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-        <TextField
-            label="Date Finished Airing"
-            variant="standard"
-            fullWidth
-            id="animeDateFinished"
-            value={animeDateFinished}
-            onChange={e => {
-                setAnimeDateFinished(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-
-        <Spacing />
-
-        {/* SYNOPSIS */}
-        <Typography
-            variant="button"
-            display="block"
-            gutterBottom>
-            Synopsis
-        </Typography>
-        <TextField
-            label="Synopsis"
-            variant="standard"
-            fullWidth
-            multiline
-            rows={3}
-            id="animeSynopsis"
-            value={animeSynopsis}
-            onChange={e => {
-                setAnimeSynopsis(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
-        <TextField
-            label="Japanese Synopsis"
-            variant="standard"
-            fullWidth
-            multiline
-            rows={3}
-            id="animeJapaneseSynopsis"
-            value={animeJapaneseSynopsis}
-            onChange={e => {
-                setAnimeJapaneseSynopsis(e.target.value);
-            } }
-            sx={{
-                marginY: 1,
-            }} />
+            {/* BASIC DETAILS */}
+            <Typography
+                variant="button"
+                display="block"
+                gutterBottom>
+                Basic Details
+            </Typography>
+            <TextField
+                label="Title"
+                variant="standard"
+                autoFocus
+                fullWidth
+                id="animeTitle"
+                value={animeTitle}
+                onChange={e => setAnimeTitle(e.target.value)}
+                sx={{
+                    marginY: 1,
+                }} />
+            <TextField
+                label="Studio"
+                variant="standard"
+                fullWidth
+                id="animeStudio"
+                value={animeStudio}
+                onChange={e => {
+                    setAnimeStudio(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+            <TextField
+                label="Episodes"
+                type="number"
+                variant="standard"
+                fullWidth
+                id="animeEpisodes"
+                value={animeEpisodes}
+                onChange={e => {
+                    setAnimeEpisodes(Number.parseInt(e.target.value));
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+            <TextField
+                label="Duration"
+                variant="standard"
+                fullWidth
+                id="animeDuration"
+                value={animeDuration}
+                onChange={e => {
+                    setAnimeDuration(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+            <TextField
+                label="Rating"
+                type="number"
+                variant="standard"
+                fullWidth
+                id="animeRating"
+                value={animeRating}
+                onChange={e => {
+                    setAnimeRating(Number.parseInt(e.target.value));
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+            <TextField
+                label="Image URL"
+                variant="standard"
+                fullWidth
+                id="animeImageUrl"
+                value={animeImageUrl}
+                onChange={e => {
+                    setAnimeImageUrl(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
 
             <Spacing />
 
-            {/* TAGS */}
+            {/* JAPANESE */}
             <Typography
                 variant="button"
                 display="block"
                 gutterBottom>
-                Tags
+                Japanese
             </Typography>
-            <FormGroup row>
-            {
-                tagList.map((tag) => {
-                    return (
-                        <FormControlLabel
-                            key={ tag.id }
-                            label={ tag.name } 
-                            control={
-                                <Checkbox 
-                                    onChange={(e) => {
-                                        if (e.target.checked) {
-                                            selectedTagList.push(tag);
-                                            setSelectedTagList(selectedTagList);
-                                        }
+            <TextField
+                label="Japanese Title"
+                variant="standard"
+                fullWidth
+                id="animeJapaneseTitle"
+                value={animeJapaneseTitle}
+                onChange={e => {
+                    setAnimeJapaneseTitle(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+            <TextField
+                label="Japanese Title Hiragana"
+                variant="standard"
+                fullWidth
+                id="animeJapaneseTitleHiragana"
+                value={animeJapaneseTitleHiragana}
+                onChange={e => {
+                    setAnimeJapaneseTitleHiragana(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
 
-                                        if (!e.target.checked) {
-                                            const index = FindIndex(selectedTagList, tag);
-                                            if (index === undefined) {
-                                                alert("Undefined");
-                                                return;
+            <Spacing />
+
+            {/* DATE AIRED AND FINISHED */}
+            <Typography
+                variant="button"
+                display="block"
+                gutterBottom>
+                Date Aired and Finished
+            </Typography>
+            <TextField
+                label="Date Aired"
+                variant="standard"
+                fullWidth
+                id="animeDateAired"
+                value={animeDateAired}
+                onChange={e => {
+                    setAnimeDateAired(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+            <TextField
+                label="Date Finished Airing"
+                variant="standard"
+                fullWidth
+                id="animeDateFinished"
+                value={animeDateFinished}
+                onChange={e => {
+                    setAnimeDateFinished(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+
+            <Spacing />
+
+            {/* SYNOPSIS */}
+            <Typography
+                variant="button"
+                display="block"
+                gutterBottom>
+                Synopsis
+            </Typography>
+            <TextField
+                label="Synopsis"
+                variant="standard"
+                fullWidth
+                multiline
+                rows={3}
+                id="animeSynopsis"
+                value={animeSynopsis}
+                onChange={e => {
+                    setAnimeSynopsis(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+            <TextField
+                label="Japanese Synopsis"
+                variant="standard"
+                fullWidth
+                multiline
+                rows={3}
+                id="animeJapaneseSynopsis"
+                value={animeJapaneseSynopsis}
+                onChange={e => {
+                    setAnimeJapaneseSynopsis(e.target.value);
+                } }
+                sx={{
+                    marginY: 1,
+                }} />
+
+                <Spacing />
+
+                {/* TAGS */}
+                <Typography
+                    variant="button"
+                    display="block"
+                    gutterBottom>
+                    Tags
+                </Typography>
+                <FormGroup row>
+                {
+                    tagList.map((tag) => {
+                        return (
+                            <FormControlLabel
+                                key={ tag.id }
+                                label={ tag.name } 
+                                control={
+                                    <Checkbox 
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                selectedTagList.push(tag);
+                                                setSelectedTagList(selectedTagList);
                                             }
 
-                                            const REMOVE_ONE_ELEMENT_ONLY = 1;
-                                            selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
-                                            setSelectedTagList(selectedTagList);
-                                        }
+                                            if (!e.target.checked) {
+                                                const index = FindIndex(selectedTagList, tag);
+                                                if (index === undefined) {
+                                                    alert("Undefined");
+                                                    return;
+                                                }
 
-                                        console.log("------UPDATED-----");
-                                        console.log(" ");
-                                        selectedTagList.map(tag => {
-                                            console.log(tag.id + " " + tag.name );
-                                        });
-                                        console.log(" ");
-                                        console.log("------END-----");
-                                    }}
-                                />
-                            } 
-                        />
-                    );
-                })
-            }
-            </FormGroup>
-            {/* GENRES */}
-            <Typography
-                variant="button"
-                display="block"
-                gutterBottom>
-                Genres
-            </Typography>
-            <FormGroup>
-            {/* {
-                animeGenreList.map((genre) => {
-                    return <FormControlLabel 
-                                label={ genre.name } 
-                                control={<Checkbox 
-                                            defaultChecked 
-                                            onClick={() => {
-                                                selectedGenreList.push(genre);
-                                                setSelectedGenreList(selectedGenreList);
-                                            }}/>
-                                        } 
-                            />;
-                })
-            } */}
-            </FormGroup>
-    </Box>;
+                                                const REMOVE_ONE_ELEMENT_ONLY = 1;
+                                                selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                                setSelectedTagList(selectedTagList);
+                                            }
+
+                                            console.log("------UPDATED-----");
+                                            console.log(" ");
+                                            selectedTagList.map(tag => {
+                                                console.log(tag.id + " " + tag.name );
+                                            });
+                                            console.log(" ");
+                                            console.log("------END-----");
+                                        }}
+                                    />
+                                } 
+                            />
+                        );
+                    })
+                }
+                </FormGroup>
+                {/* GENRES */}
+                <Typography
+                    variant="button"
+                    display="block"
+                    gutterBottom>
+                    Genres
+                </Typography>
+                <FormGroup>
+                {/* {
+                    animeGenreList.map((genre) => {
+                        return <FormControlLabel 
+                                    label={ genre.name } 
+                                    control={<Checkbox 
+                                                defaultChecked 
+                                                onClick={() => {
+                                                    selectedGenreList.push(genre);
+                                                    setSelectedGenreList(selectedGenreList);
+                                                }}/>
+                                            } 
+                                />;
+                    })
+                } */}
+                </FormGroup>
+        </Box>
+    );
 }
 
 function FindIndex(tagList: Array<Tag>, tag: Tag) : number | undefined {
