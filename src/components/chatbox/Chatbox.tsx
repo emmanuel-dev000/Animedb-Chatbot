@@ -54,6 +54,9 @@ export default function Chatbox() {
     const [tagList, setTagList] = useState<Array<Tag>>([]);
     const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
 
+    const [genreList, setGenreList] = useState<Array<Genre>>([]);
+    const [selectedGenreList, setSelectedGenreList] = useState<Array<Genre>>([]);
+
     useEffect(() => {
         if (animeId == null || animeId === "") return;
         console.log(`http://localhost:8080/api/v1/anime/${ animeId }`);
@@ -78,6 +81,24 @@ export default function Chatbox() {
             axios.get(`http://localhost:8080/api/v1/anime/${ animeId }/tags`)
                 .then(res => {
                     setSelectedTagList(res.data);
+                })
+                .catch(err => alert(err));
+    }, [animeId]);
+
+    useEffect(() => {
+        console.log("http://localhost:8080/api/v1/genres");
+        axios.get("http://localhost:8080/api/v1/genres")
+            .then(res => {
+                setGenreList(res.data);
+            });
+    }, []);
+
+    useEffect(() => {
+        if (animeId == null || animeId === "") return;
+        console.log(`http://localhost:8080/api/v1/anime/${ animeId }/genres`);
+            axios.get(`http://localhost:8080/api/v1/anime/${ animeId }/genres`)
+                .then(res => {
+                    setSelectedGenreList(res.data);
                 })
                 .catch(err => alert(err));
     }, [animeId]);
@@ -427,6 +448,9 @@ export default function Chatbox() {
                 selectedTagList={selectedTagList}
                 setSelectedTagList={setSelectedTagList}
                 tagList={tagList}
+                selectedGenreList={selectedGenreList}
+                setSelectedGenreList={setSelectedGenreList}
+                genreList={genreList}
                 handleCloseEditForm={handleCloseEditForm}
                 onEditError={() => alert("Error")}
                 onEditSuccess={OnEditSuccess}

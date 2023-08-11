@@ -202,7 +202,9 @@ function Form(props: ViewFormProps) {
         {
             // Tags
             props.anime.tagList.map(tag => {
-                return <Chip
+                return (
+                    tag && (
+                        <Chip
                             color="info"
                             key={ tag.id }
                             size="small" 
@@ -212,7 +214,10 @@ function Form(props: ViewFormProps) {
                             }} 
                             onClick={() => {
                                 alert(tag.id + " " + tag.name)}
-                            } />;
+                            } 
+                        />
+                    )
+                );
         })}
 
         <Typography
@@ -230,7 +235,9 @@ function Form(props: ViewFormProps) {
         {
             // Genres
             props.anime.genreList.map(genre => {
-                return <Chip
+                return (
+                    genre && (
+                        <Chip
                             color="info"
                             key={ genre.id }
                             size="small" 
@@ -240,7 +247,10 @@ function Form(props: ViewFormProps) {
                             }}
                             onClick={() => {
                                 alert(genre.id + " " + genre.name)}
-                            } />;
+                            } 
+                        />
+                    )
+                );
         })}
 
         <Spacing />

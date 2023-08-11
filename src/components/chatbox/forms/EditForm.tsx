@@ -3,16 +3,15 @@ import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import DeleteForeverSharpIcon from '@mui/icons-material/DeleteForeverSharp';
 import { DeleteAnimeById, EditAnimeById, GetAnimeImageDetailById } from "../../../hooks/HttpAnime";
 import { ChatboxState } from "../../../types/enums";
-import { AnimeImageDetail, AnimeRequest, AnimeResponse, Tag } from "../../../types/types";
+import { AnimeImageDetail, AnimeRequest, AnimeResponse, Genre, Tag } from "../../../types/types";
 import { Spacing } from "../Spacing";
 import { UpdateTagListInAnimeById } from "../../../hooks/HttpTag";
+import { UpdateGenreListInAnimeById } from "../../../hooks/HttpGenre";
 
 interface EditFormProps {
     openEditForm: boolean; 
     anime: AnimeResponse;
     chatboxState: ChatboxState;
-    tagList: Array<Tag>; 
-    selectedTagList: Array<Tag>; 
     handleCloseEditForm: () => void; 
     DisableSendButton: () => void; 
     onCloseEditForm: () => void; 
@@ -31,7 +30,12 @@ interface EditFormProps {
     setAnimeDateFinished: React.Dispatch<React.SetStateAction<string>>; 
     setAnimeSynopsis: React.Dispatch<React.SetStateAction<string>>;
     setAnimeJapaneseSynopsis: React.Dispatch<React.SetStateAction<string>>;
+    tagList: Array<Tag>; 
+    selectedTagList: Array<Tag>; 
     setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>;
+    genreList: Array<Genre>; 
+    selectedGenreList: Array<Genre>; 
+    setSelectedGenreList: React.Dispatch<React.SetStateAction<Array<Genre>>>;
 }
 
 export default function EditForm({ ...props } : EditFormProps) {    
@@ -68,6 +72,7 @@ function Header({ ...props }: EditFormProps) {
                 onClick={() => {
                     props.handleCloseEditForm();
                     props.setSelectedTagList([]);
+                    props.setSelectedGenreList([]);
                 }}
             >
                 <CloseSharpIcon />
@@ -114,11 +119,18 @@ function Header({ ...props }: EditFormProps) {
                             return;
                         }
 
+                        const updateGenreAnimeResponse = await UpdateGenreListInAnimeById(props.anime.id, props.selectedGenreList);
+                        if (updateGenreAnimeResponse == null) {
+                            props.onEditError();
+                            return;
+                        }
+
                         const animeImageDetail = await GetAnimeImageDetailById(props.anime.id);
                         props.onEditSuccess(animeImageDetail);
                     }
 
                     props.setSelectedTagList([]);
+                    props.setSelectedGenreList([]);
                     props.onCloseEditForm();
                     return;
                 } }>
@@ -332,37 +344,85 @@ function Form({ ...props }: EditFormProps) {
         {
             props.tagList.map((tag) => {
                 return (
+                    tag && (
+                        <FormControlLabel
+                            key={ tag.id }
+                            label={ tag.name } 
+                            control={
+                                <Checkbox 
+                                    defaultChecked = { IsTagIncluded(props.anime.tagList, tag) }
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            props.selectedTagList.push(tag);
+                                            props.setSelectedTagList(props.selectedTagList);
+                                        }
+
+                                        if (!e.target.checked) {
+                                            const index = FindTagIndex(props.selectedTagList, tag);
+                                            if (index === undefined) {
+                                                alert("Undefined");
+                                                return;
+                                            }
+
+                                            const REMOVE_ONE_ELEMENT_ONLY = 1;
+                                            props.selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                            props.setSelectedTagList(props.selectedTagList);
+                                        }
+                                    }}
+                                />
+                            } 
+                        />
+                    )
+                );
+            })
+        }
+        </FormGroup>
+
+        <Spacing />
+
+        <Typography
+            variant="button"
+            display="block"
+            gutterBottom>
+            Genres
+        </Typography>
+        <FormGroup row>
+        {
+            props.genreList.map((genre) => {
+                return (
                     <FormControlLabel
-                        key={ tag.id }
-                        label={ tag.name } 
+                        key={ genre.id }
+                        label={ genre.name } 
                         control={
                             <Checkbox 
-                                defaultChecked = { IsTagIncluded(props.anime.tagList, tag) }
+                                defaultChecked = { IsGenreIncluded(props.anime.genreList, genre) }
                                 onChange={(e) => {
                                     if (e.target.checked) {
-                                        props.selectedTagList.push(tag);
-                                        props.setSelectedTagList(props.selectedTagList);
+                                        props.selectedGenreList.push(genre);
+                                        props.setSelectedGenreList(props.selectedGenreList);
                                     }
 
                                     if (!e.target.checked) {
-                                        const index = FindIndex(props.selectedTagList, tag);
+                                        const index = FindGenreIndex(props.selectedGenreList, genre);
                                         if (index === undefined) {
                                             alert("Undefined");
                                             return;
                                         }
 
                                         const REMOVE_ONE_ELEMENT_ONLY = 1;
-                                        props.selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
-                                        props.setSelectedTagList(props.selectedTagList);
+                                        props.selectedGenreList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                        props.setSelectedGenreList(props.selectedGenreList);
                                     }
 
-                                    console.log("------UPDATED-----");
                                     console.log(" ");
-                                    props.selectedTagList.map(tag => {
-                                        console.log(tag.id + " " + tag.name );
+                                    console.log("------ UPDATED GENRES -----");
+                                    console.log(" ");
+                                    props.selectedGenreList.map(genre => {
+                                        console.log(genre.id + " " + genre.name );
                                     });
                                     console.log(" ");
                                     console.log("------END-----");
+                                    console.log(" ");
                                 }}
                             />
                         } 
@@ -407,10 +467,32 @@ function IsTagIncluded(tagList: Array<Tag>, tag: Tag) : boolean {
     return false;
 }
 
-function FindIndex(tagList: Array<Tag>, tag: Tag) : number | undefined {
+function IsGenreIncluded(genreList: Array<Genre>, genre: Genre) : boolean {
+    for (let index = 0; index < genreList.length; index++) {
+        const g = genreList[index];
+        if (g.id === genre.id) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function FindTagIndex(tagList: Array<Tag>, tag: Tag) : number | undefined {
     for (let index = 0; index < tagList.length; index++) {
         const t = tagList[index];
         if (t.id === tag.id) {
+            return index;
+        }
+    }
+
+    return undefined;
+}
+
+function FindGenreIndex(genreList: Array<Genre>, genre: Genre) : number | undefined {
+    for (let index = 0; index < genreList.length; index++) {
+        const g = genreList[index];
+        if (g.id === genre.id) {
             return index;
         }
     }
