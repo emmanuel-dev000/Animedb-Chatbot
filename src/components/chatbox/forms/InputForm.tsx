@@ -2,7 +2,7 @@ import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Button, TextField,
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import { AddNewAnime } from "../../../hooks/HttpAnime";
 import { ChatboxState } from "../../../types/enums";
-import { AnimeRequest, Genre, Tag } from "../../../types/types";
+import { AnimeRequest, AnimeResponse, Genre, Tag } from "../../../types/types";
 import { Spacing } from "../Spacing";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -15,7 +15,7 @@ interface InputFormProps {
     chatboxState: ChatboxState;
     onCloseButtonClicked: () => void;
     onSaveAnimeSuccess: () => void;
-    onSaveStateAdd: () => void;
+    onSaveStateAdd: (anime: AnimeResponse) => void;
 }
 
 export default function InputForm({ ...props }: InputFormProps) {
@@ -186,7 +186,7 @@ function Header(
                                 return;
                             }
 
-                            props.onSaveStateAdd();
+                            props.onSaveStateAdd(genreListAddResponse);
                         }
 
                         props.onSaveAnimeSuccess();

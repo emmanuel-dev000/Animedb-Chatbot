@@ -245,6 +245,16 @@ export default function Chatbox() {
         );
     }
 
+    function OnAddSuccess(anime: AnimeResponse) {
+        const animeImageDetail : AnimeImageDetail = {
+            id: anime.id,
+            imageUrl: anime.imageUrl,
+            title: anime.title
+        };
+        AddAiAnimeImageToMessageList(animeImageDetail);
+        AddAiMessageboxToMessageList(ANIME_ADDED_SUCCESS_MESSAGE, AvatarType.HAPPY);
+    }
+
     function OnEditSuccess(animeImage: AnimeImageDetail) {
         AddAiMessageboxToMessageList(ANIME_UPDATED_SUCCESS_MESSAGE, AvatarType.HAPPY);
         AddAiAnimeImageToMessageList(animeImage);
@@ -407,9 +417,7 @@ export default function Chatbox() {
                     ResetInput();
                     EnableSendButton();
                 }}
-                onSaveStateAdd = { () => {
-                    AddAiMessageboxToMessageList(ANIME_ADDED_SUCCESS_MESSAGE, AvatarType.HAPPY);
-                } }
+                onSaveStateAdd = {OnAddSuccess}
             />
 
             <ViewForm 
