@@ -51,12 +51,33 @@ export default function Chatbox() {
     const [animeJapaneseTitleHiragana, setAnimeJapaneseTitleHiragana] = useState<string>("");
     const [animeJapaneseSynopsis, setAnimeJapaneseSynopsis] = useState<string>("");
 
+    const [tagList, setTagList] = useState<Array<Tag>>([]);
+    const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
+
     useEffect(() => {
         if (animeId == null || animeId === "") return;
         console.log(`http://localhost:8080/api/v1/anime/${ animeId }`);
             axios.get(`http://localhost:8080/api/v1/anime/${ animeId }`)
                 .then(res => {
                     SetAnimeInputs(res.data)
+                })
+                .catch(err => alert(err));
+    }, [animeId]);
+
+    useEffect(() => {
+        console.log("http://localhost:8080/api/v1/tags");
+        axios.get("http://localhost:8080/api/v1/tags")
+            .then(res => {
+                setTagList(res.data);
+            });
+    }, []);
+
+    useEffect(() => {
+        if (animeId == null || animeId === "") return;
+        console.log(`http://localhost:8080/api/v1/anime/${ animeId }/tags`);
+            axios.get(`http://localhost:8080/api/v1/anime/${ animeId }/tags`)
+                .then(res => {
+                    setSelectedTagList(res.data);
                 })
                 .catch(err => alert(err));
     }, [animeId]);
@@ -403,6 +424,9 @@ export default function Chatbox() {
 
             <EditForm
                 openEditForm={openEditForm}
+                selectedTagList={selectedTagList}
+                setSelectedTagList={setSelectedTagList}
+                tagList={tagList}
                 handleCloseEditForm={handleCloseEditForm}
                 onEditError={() => alert("Error")}
                 onEditSuccess={OnEditSuccess}

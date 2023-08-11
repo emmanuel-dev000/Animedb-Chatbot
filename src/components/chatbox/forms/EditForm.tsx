@@ -5,14 +5,14 @@ import { DeleteAnimeById, EditAnimeById, GetAnimeImageDetailById } from "../../.
 import { ChatboxState } from "../../../types/enums";
 import { AnimeImageDetail, AnimeRequest, AnimeResponse, Tag } from "../../../types/types";
 import { Spacing } from "../Spacing";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { UpdateTagListInAnimeById } from "../../../hooks/HttpTag";
 
 interface EditFormProps {
     openEditForm: boolean; 
     anime: AnimeResponse;
-    chatboxState: ChatboxState; 
+    chatboxState: ChatboxState;
+    tagList: Array<Tag>; 
+    selectedTagList: Array<Tag>; 
     handleCloseEditForm: () => void; 
     DisableSendButton: () => void; 
     onCloseEditForm: () => void; 
@@ -31,19 +31,10 @@ interface EditFormProps {
     setAnimeDateFinished: React.Dispatch<React.SetStateAction<string>>; 
     setAnimeSynopsis: React.Dispatch<React.SetStateAction<string>>;
     setAnimeJapaneseSynopsis: React.Dispatch<React.SetStateAction<string>>;
+    setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>;
 }
 
-export default function EditForm({ ...props } : EditFormProps) {
-    const [tagList, setTagList] = useState<Array<Tag>>([]);
-    const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
-
-    useEffect(() => {
-        axios.get("http://localhost:8080/api/v1/tags")
-            .then(res => {
-                setTagList(res.data);
-            });
-    }, [tagList]);
-    
+export default function EditForm({ ...props } : EditFormProps) {    
     return (
         <Slide
             direction="up"
@@ -60,21 +51,24 @@ export default function EditForm({ ...props } : EditFormProps) {
                     position: "fixed",
                 }}
             >
-                { Header(props, selectedTagList) }
+                { Header(props) }
 
-                { Form(props, tagList, selectedTagList, setSelectedTagList) }
+                { Form(props) }
             </Box>
         </Slide>
     );
 }
 
-function Header({ ...props }: EditFormProps, selectedTagList: Array<Tag> ) {
+function Header({ ...props }: EditFormProps) {
     return <AppBar position="static">
         <Toolbar>
             <IconButton
                 color="inherit"
                 edge="start"
-                onClick={() => props.handleCloseEditForm()}
+                onClick={() => {
+                    props.handleCloseEditForm();
+                    props.setSelectedTagList([]);
+                }}
             >
                 <CloseSharpIcon />
             </IconButton>
@@ -114,7 +108,7 @@ function Header({ ...props }: EditFormProps, selectedTagList: Array<Tag> ) {
                             return;
                         }
 
-                        const updateTagAnimeResponse = await UpdateTagListInAnimeById(props.anime.id, selectedTagList);
+                        const updateTagAnimeResponse = await UpdateTagListInAnimeById(props.anime.id, props.selectedTagList);
                         if (updateTagAnimeResponse == null) {
                             props.onEditError();
                             return;
@@ -124,6 +118,7 @@ function Header({ ...props }: EditFormProps, selectedTagList: Array<Tag> ) {
                         props.onEditSuccess(animeImageDetail);
                     }
 
+                    props.setSelectedTagList([]);
                     props.onCloseEditForm();
                     return;
                 } }>
@@ -133,12 +128,7 @@ function Header({ ...props }: EditFormProps, selectedTagList: Array<Tag> ) {
     </AppBar>;
 }
 
-function Form(
-    { ...props }: EditFormProps,
-    tagList: Array<Tag>,
-    selectedTagList: Array<Tag>,
-    setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>,
-    ) {
+function Form({ ...props }: EditFormProps) {
     return <Box
         sx={{
             marginTop: 2,
@@ -340,7 +330,7 @@ function Form(
         </Typography>
         <FormGroup row>
         {
-            tagList.map((tag) => {
+            props.tagList.map((tag) => {
                 return (
                     <FormControlLabel
                         key={ tag.id }
@@ -350,25 +340,25 @@ function Form(
                                 defaultChecked = { IsTagIncluded(props.anime.tagList, tag) }
                                 onChange={(e) => {
                                     if (e.target.checked) {
-                                        selectedTagList.push(tag);
-                                        setSelectedTagList(selectedTagList);
+                                        props.selectedTagList.push(tag);
+                                        props.setSelectedTagList(props.selectedTagList);
                                     }
 
                                     if (!e.target.checked) {
-                                        const index = FindIndex(selectedTagList, tag);
+                                        const index = FindIndex(props.selectedTagList, tag);
                                         if (index === undefined) {
                                             alert("Undefined");
                                             return;
                                         }
 
                                         const REMOVE_ONE_ELEMENT_ONLY = 1;
-                                        selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
-                                        setSelectedTagList(selectedTagList);
+                                        props.selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                        props.setSelectedTagList(props.selectedTagList);
                                     }
 
                                     console.log("------UPDATED-----");
                                     console.log(" ");
-                                    selectedTagList.map(tag => {
+                                    props.selectedTagList.map(tag => {
                                         console.log(tag.id + " " + tag.name );
                                     });
                                     console.log(" ");
