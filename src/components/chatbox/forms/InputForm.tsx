@@ -2,11 +2,12 @@ import { Slide, Box, AppBar, Toolbar, IconButton, Typography, Button, TextField,
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import { AddNewAnime } from "../../../hooks/HttpAnime";
 import { ChatboxState } from "../../../types/enums";
-import { AnimeRequest, Tag } from "../../../types/types";
+import { AnimeRequest, Genre, Tag } from "../../../types/types";
 import { Spacing } from "../Spacing";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { UpdateTagListInAnimeById } from "../../../hooks/HttpTag";
+import { UpdateGenreListInAnimeById } from "../../../hooks/HttpGenre";
 
 interface InputFormProps {
     openInputForm: boolean;
@@ -42,6 +43,16 @@ export default function InputForm({ ...props }: InputFormProps) {
                 setTagList(res.data);
             });
     }, [tagList]);
+
+    const [genreList, setGenreList] = useState<Array<Genre>>([]);
+    const [selectedGenreList, setSelectedGenreList] = useState<Array<Genre>>([]);
+
+    useEffect(() => {
+        axios.get("http://localhost:8080/api/v1/genres")
+            .then(res => {
+                setGenreList(res.data);
+            });
+    }, [genreList]);
     
     return (
         <Slide
@@ -79,7 +90,9 @@ export default function InputForm({ ...props }: InputFormProps) {
                             japaneseSynopsis: animeJapaneseSynopsis,
                         },
                         selectedTagList,
-                        setSelectedTagList
+                        setSelectedTagList,
+                        selectedGenreList,
+                        setSelectedGenreList
                     )
                 }
 
@@ -111,7 +124,10 @@ export default function InputForm({ ...props }: InputFormProps) {
                         setAnimeJapaneseSynopsis,
                         tagList,
                         selectedTagList,
-                        setSelectedTagList
+                        setSelectedTagList,
+                        genreList,
+                        selectedGenreList,
+                        setSelectedGenreList
                     )}
             </Box>
         </Slide>
@@ -123,7 +139,9 @@ function Header(
     { ...props } : InputFormProps, 
     anime: AnimeRequest,
     selectedTagList: Array<Tag>,
-    setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>
+    setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>,
+    selectedGenreList: Array<Genre>,
+    setSelectedGenreList: React.Dispatch<React.SetStateAction<Array<Genre>>>,
     ) {
     return (
         <AppBar position="static">
@@ -134,6 +152,7 @@ function Header(
                     onClick={() => {
                         props.onCloseButtonClicked();
                         setSelectedTagList([]);
+                        setSelectedGenreList([]);
                     }}
                 >
                     <CloseSharpIcon />
@@ -161,11 +180,18 @@ function Header(
                                 return;
                             }
 
+                            const genreListAddResponse = await UpdateGenreListInAnimeById(animeResponse.id, selectedGenreList);
+                            if (genreListAddResponse == null) {
+                                alert("Error");
+                                return;
+                            }
+
                             props.onSaveStateAdd();
                         }
 
                         props.onSaveAnimeSuccess();
                         setSelectedTagList([]);
+                        setSelectedGenreList([]);
                     }}>
                     Save
                 </Button>
@@ -202,6 +228,9 @@ function Form(
     tagList: Array<Tag>,
     selectedTagList: Array<Tag>,
     setSelectedTagList: React.Dispatch<React.SetStateAction<Array<Tag>>>,
+    genreList: Array<Genre>,
+    selectedGenreList: Array<Genre>,
+    setSelectedGenreList: React.Dispatch<React.SetStateAction<Array<Genre>>>,
     ) {
     return (
         <Box
@@ -412,40 +441,42 @@ function Form(
                 {
                     tagList.map((tag) => {
                         return (
-                            <FormControlLabel
+                            tag && (
+                                <FormControlLabel
                                 key={ tag.id }
-                                label={ tag.name } 
-                                control={
-                                    <Checkbox 
-                                        onChange={(e) => {
-                                            if (e.target.checked) {
-                                                selectedTagList.push(tag);
-                                                setSelectedTagList(selectedTagList);
-                                            }
-
-                                            if (!e.target.checked) {
-                                                const index = FindIndex(selectedTagList, tag);
-                                                if (index === undefined) {
-                                                    alert("Undefined");
-                                                    return;
+                                    label={ tag.name } 
+                                    control={
+                                        <Checkbox 
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    selectedTagList.push(tag);
+                                                    setSelectedTagList(selectedTagList);
                                                 }
 
-                                                const REMOVE_ONE_ELEMENT_ONLY = 1;
-                                                selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
-                                                setSelectedTagList(selectedTagList);
-                                            }
+                                                if (!e.target.checked) {
+                                                    const index = FindTagIndex(selectedTagList, tag);
+                                                    if (index === undefined) {
+                                                        alert("Undefined");
+                                                        return;
+                                                    }
 
-                                            console.log("------UPDATED-----");
-                                            console.log(" ");
-                                            selectedTagList.map(tag => {
-                                                console.log(tag.id + " " + tag.name );
-                                            });
-                                            console.log(" ");
-                                            console.log("------END-----");
-                                        }}
-                                    />
-                                } 
-                            />
+                                                    const REMOVE_ONE_ELEMENT_ONLY = 1;
+                                                    selectedTagList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                                    setSelectedTagList(selectedTagList);
+                                                }
+
+                                                console.log("------UPDATED-----");
+                                                console.log(" ");
+                                                selectedTagList.map(tag => {
+                                                    console.log(tag.id + " " + tag.name );
+                                                });
+                                                console.log(" ");
+                                                console.log("------END-----");
+                                            }}
+                                        />
+                                    } 
+                                />
+                            )
                         );
                     })
                 }
@@ -457,30 +488,69 @@ function Form(
                     gutterBottom>
                     Genres
                 </Typography>
-                <FormGroup>
-                {/* {
-                    animeGenreList.map((genre) => {
-                        return <FormControlLabel 
+                <FormGroup row>
+                {
+                    genreList.map((genre) => {
+                        return (
+                            genre && (
+                                <FormControlLabel
+                                    key={ genre.id }
                                     label={ genre.name } 
-                                    control={<Checkbox 
-                                                defaultChecked 
-                                                onClick={() => {
+                                    control={
+                                        <Checkbox 
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
                                                     selectedGenreList.push(genre);
                                                     setSelectedGenreList(selectedGenreList);
-                                                }}/>
-                                            } 
-                                />;
+                                                }
+
+                                                if (!e.target.checked) {
+                                                    const index = FindGenreIndex(selectedGenreList, genre);
+                                                    if (index === undefined) {
+                                                        alert("Undefined");
+                                                        return;
+                                                    }
+
+                                                    const REMOVE_ONE_ELEMENT_ONLY = 1;
+                                                    selectedGenreList.splice(index, REMOVE_ONE_ELEMENT_ONLY);
+                                                    setSelectedGenreList(selectedGenreList);
+                                                }
+
+                                                console.log("------UPDATED-----");
+                                                console.log(" ");
+                                                selectedGenreList.map(genre => {
+                                                    console.log(genre.id + " " + genre.name );
+                                                });
+                                                console.log(" ");
+                                                console.log("------END-----");
+                                            }}
+                                        />
+                                    } 
+                                />
+                            )
+                        );
                     })
-                } */}
+                }
                 </FormGroup>
         </Box>
     );
 }
 
-function FindIndex(tagList: Array<Tag>, tag: Tag) : number | undefined {
+function FindTagIndex(tagList: Array<Tag>, tag: Tag) : number | undefined {
     for (let index = 0; index < tagList.length; index++) {
         const t = tagList[index];
         if (t.id === tag.id) {
+            return index;
+        }
+    }
+
+    return undefined;
+}
+
+function FindGenreIndex(genreList: Array<Genre>, genre: Genre) : number | undefined {
+    for (let index = 0; index < genreList.length; index++) {
+        const g = genreList[index];
+        if (g.id === genre.id) {
             return index;
         }
     }
