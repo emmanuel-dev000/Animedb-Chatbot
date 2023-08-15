@@ -19,6 +19,8 @@ import UserMessageBox from "./messageboxes/user/UserMessagebox";
 import AiAnimePageMessagebox from "./messageboxes/ai/AiAnimePageMessagebox";
 import axios from "axios";
 import EditForm from "./forms/EditForm";
+import AiRequestTagDatabaseToMessageList from "./messageboxes/ai/AiRequestTagDatabaseToMessageList";
+import TagDbForm from "./forms/TagDbForm";
 
 
 export default function Chatbox() {
@@ -296,6 +298,18 @@ export default function Chatbox() {
         );
     }
 
+    function AddAiRequestTagDatabaseToMessageList() {
+        AddMessageToList(
+            <AiRequestTagDatabaseToMessageList
+                key={ "TagDbRequest" + RandomId() }
+                createdAt={Now()}
+                onOpenButtonClicked={() => {
+                    handleOpenViewForm(); // try
+                }}
+            />
+        );
+    }
+
     return (
         <Box
             sx={{
@@ -394,6 +408,14 @@ export default function Chatbox() {
                         const deleteMessage = await DeleteAnimeById(animeId);
                         AddAiMessageboxToMessageList(`${ deleteMessage }`, AvatarType.HAPPY);
                         AddAiMessageboxToMessageList(`[${ animeId }] ${ ANIME_DELETE_SUCCESS_MESSAGE }`, AvatarType.HAPPY);
+                        ResetInput();
+                        EnableSendButton();
+                    }}
+
+                    onInputEqualsTags={() => {
+                        DisableSendButton();
+                        AddUserMessageboxToMessageList();
+                        AddAiRequestTagDatabaseToMessageList();
                         ResetInput();
                         EnableSendButton();
                     }}
@@ -500,6 +522,21 @@ export default function Chatbox() {
                     imageUrl: animeImageUrl,
                     genreList: animeGenreList,
                     tagList: animeTagList
+                }}
+            />
+
+            <TagDbForm 
+                // tagList={ tagList }
+                openViewForm={openViewForm}
+                onCloseButtonClicked={() => {
+                    ResetAnimeInputs();
+                    setChatboxState(ChatboxState.IDLE);
+                    handleCloseViewForm();
+                }}
+                onEditButtonClicked={() => {
+                    handleCloseViewForm();
+                    setChatboxState(ChatboxState.EDIT);
+                    handleOpenEditForm();
                 }}
             />
         </Box>

@@ -1,5 +1,5 @@
 import { Paper, Stack, TextField } from "@mui/material";
-import { INPUT_LENGTH_MAX, IsInputEqualsList, IsInputEqualsDelete, IsInputEqualsEdit, IsInputEqualsAdd, IsInputEqualsShow, IsInputNotEqualsToAnyCommand } from "../../../handlers/InputHandler";
+import { INPUT_LENGTH_MAX, IsInputEqualsList, IsInputEqualsDelete, IsInputEqualsEdit, IsInputEqualsAdd, IsInputEqualsShow, IsInputNotEqualsToAnyCommand, IsInputEqualsTags } from "./InputHandler";
 import Footer from "../Footer";
 import { SendButton } from "./SendButton";
 import React from "react";
@@ -16,6 +16,7 @@ interface InputProps {
     onInputEqualsAdd: () => void;
     onInputEqualsEdit: () => Promise<void>;
     onInputEqualsDelete: () => Promise<void>;
+    onInputEqualsTags: () => void;
 }
 
 export default function Input({ ...props }: InputProps) {
@@ -61,34 +62,35 @@ export default function Input({ ...props }: InputProps) {
                             return;
                         }
 
-                        // Shows the anime page list.
                         if (IsInputEqualsList(props.input)) {
                             await props.onInputEqualsList();
                             return;
                         }
 
-                        // Shows the anime's full details based on its id.
                         if (IsInputEqualsShow(props.input)) {
                             await props.onInputEqualsShow();
                             return;
                         }
 
-                        // Deletes the anime by its id, and shows the new/updated list.
                         if (IsInputEqualsDelete(props.input)) {
                             await props.onInputEqualsDelete();
                             return;
                         }
 
-                        // Adds an anime by filling the provided form.
                         if (IsInputEqualsAdd(props.input)) {
                             props.onInputEqualsAdd();
                             return;
                         }
 
-                        // Editing the anime details through form.
                         if (IsInputEqualsEdit(props.input)) {
                             await props.onInputEqualsEdit();
+                            return;
                         }
+
+                        if (IsInputEqualsTags(props.input)) {
+                            props.onInputEqualsTags();
+                            return;
+                        } 
                     }} />
                 <Footer />
             </Stack>

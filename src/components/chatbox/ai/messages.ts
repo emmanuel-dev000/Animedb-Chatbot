@@ -6,7 +6,8 @@ export const ANIME_DELETE_SUCCESS_MESSAGE = "Anime was thrown to the trash bin a
 export const EDIT_FORM_YESNO_MESSAGE = "Do you really wanna edit this anime?";
 export const LIST_RETRIEVE_SUCCESS_MESSAGE = "Fresh from the database anime list.";
 export const LIST_UPDATED_SUCCESS_MESSAGE = "And here's the new anime list.";
-export const REQUEST_ADD_ANIME_MESSAGE = "Freshly delivered form. Open to fill it.";
+export const REQUEST_ADD_ANIME_MESSAGE = "Freshly delivered form.";
+export const OPEN_TAGS_DB = "Requesting for Tags Database?";
 
 const apologyList = [
     "I'm so sorry user, there's no command for that.",

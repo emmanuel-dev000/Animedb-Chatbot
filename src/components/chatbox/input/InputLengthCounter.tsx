@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material"
-import { InputLengthCounterByInput } from "../../../handlers/InputHandler";
+import { InputLengthCounterByInput } from "./InputHandler";
 
 interface InputLengthCounterProps {
     inputLength: number;

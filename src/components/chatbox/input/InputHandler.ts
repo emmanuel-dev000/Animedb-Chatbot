@@ -1,11 +1,19 @@
-import { USER_EXCEED_MAX_INPUT_MESSAGE } from "../components/chatbox/ai/messages";
+import { USER_EXCEED_MAX_INPUT_MESSAGE } from "../ai/messages";
 
 export function IsInputNotEqualsToAnyCommand(input: string) {
     return !IsInputEqualsList(input)
         && !IsInputEqualsDelete(input)
         && !IsInputEqualsEdit(input)
         && !IsInputEqualsAdd(input) 
-        && !IsInputEqualsShow(input);
+        && !IsInputEqualsShow(input)
+        && !IsInputEqualsTags(input);
+}
+
+export function IsInputEqualsTags(input: string) {
+    return input.includes("Tag")
+        || input.includes("tag")
+        || input.includes("Tags")
+        || input.includes("tags");
 }
 
 export function IsInputEqualsEdit(input: string) {
