@@ -33,6 +33,7 @@ export default function Chatbox() {
     const [openInputForm, setOpenInputForm] = useState<boolean>(false);
     const [openEditForm, setOpenEditForm] = useState<boolean>(false);
     const [openViewForm, setOpenViewForm] = useState<boolean>(false);
+    const [openTagDbForm, setOpenTagDbForm] = useState<boolean>(false);
     
     const [animeId, setAnimeId] = useState<string>("");
     const [animeTitle, setAnimeTitle] = useState<string>("");
@@ -140,6 +141,14 @@ export default function Chatbox() {
 
     const handleCloseEditForm = () => {
         setOpenEditForm(false);
+    }
+
+    const handleOpenTagDbForm = () => {
+        setOpenTagDbForm(true);
+    }
+
+    const handleCloseTagDbForm = () => {
+        setOpenTagDbForm(false);
     }
 
     function AddMessageToList(message: React.JSX.Element) {
@@ -304,7 +313,7 @@ export default function Chatbox() {
                 key={ "TagDbRequest" + RandomId() }
                 createdAt={Now()}
                 onOpenButtonClicked={() => {
-                    handleOpenViewForm(); // try
+                    handleOpenTagDbForm();
                 }}
             />
         );
@@ -526,17 +535,10 @@ export default function Chatbox() {
             />
 
             <TagDbForm 
-                // tagList={ tagList }
-                openViewForm={openViewForm}
+                openViewForm={openTagDbForm}
                 onCloseButtonClicked={() => {
-                    ResetAnimeInputs();
                     setChatboxState(ChatboxState.IDLE);
-                    handleCloseViewForm();
-                }}
-                onEditButtonClicked={() => {
-                    handleCloseViewForm();
-                    setChatboxState(ChatboxState.EDIT);
-                    handleOpenEditForm();
+                    handleCloseTagDbForm();
                 }}
             />
         </Box>

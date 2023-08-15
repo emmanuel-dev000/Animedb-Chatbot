@@ -13,7 +13,6 @@ import axios from "axios";
 interface Props {
     openViewForm: boolean;
     onCloseButtonClicked: () => void;
-    onEditButtonClicked: () => void;
 }
 
 export default function TagDbForm({ ...props }: Props) {
@@ -305,7 +304,7 @@ function EditPopup(
             </DialogTitle>
             <DialogContent>
                 <TextField
-                    placeholder="Change name"
+                    placeholder="Edit name"
                     variant="standard"
                     id="tagName"
                     sx={{
