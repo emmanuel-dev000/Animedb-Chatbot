@@ -10,6 +10,10 @@ export type Genre = {
     name: string;
 }
 
+export type GenreRequest = {
+    name: string;
+}
+
 export type Tag = {
     id: string;
     name: string;

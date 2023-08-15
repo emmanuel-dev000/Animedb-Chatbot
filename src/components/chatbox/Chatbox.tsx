@@ -6,7 +6,7 @@ import Header from "./Header";
 import { Now } from "../../datetime/DateTime";
 import { AvatarType, ChatboxState } from "../../types/enums";
 import React from "react";
-import { ANIME_ADDED_SUCCESS_MESSAGE, ANIME_DELETE_SUCCESS_MESSAGE, ANIME_UPDATED_SUCCESS_MESSAGE, EDIT_FORM_YESNO_MESSAGE, RandomApology } from "./ai/messages";
+import { ANIME_ADDED_SUCCESS_MESSAGE, ANIME_DELETE_SUCCESS_MESSAGE, ANIME_UPDATED_SUCCESS_MESSAGE, EDIT_FORM_YESNO_MESSAGE, OPEN_GENRES_DB, OPEN_TAGS_DB, RandomApology } from "./ai/messages";
 import RandomId from "./utilities/RandomId";
 import ViewForm from "./forms/ViewForm";
 import InputForm from "./forms/InputForm";
@@ -19,8 +19,9 @@ import UserMessageBox from "./messageboxes/user/UserMessagebox";
 import AiAnimePageMessagebox from "./messageboxes/ai/AiAnimePageMessagebox";
 import axios from "axios";
 import EditForm from "./forms/EditForm";
-import AiRequestTagDatabaseToMessageList from "./messageboxes/ai/AiRequestTagDatabaseToMessageList";
+import AiRequestOpenDatabaseToMessageList from "./messageboxes/ai/AiRequestTagDatabaseToMessageList";
 import TagDbForm from "./forms/TagDbForm";
+import GenreDbForm from "./forms/GenreDbForm";
 
 
 export default function Chatbox() {
@@ -34,6 +35,7 @@ export default function Chatbox() {
     const [openEditForm, setOpenEditForm] = useState<boolean>(false);
     const [openViewForm, setOpenViewForm] = useState<boolean>(false);
     const [openTagDbForm, setOpenTagDbForm] = useState<boolean>(false);
+    const [openGenreDbForm, setOpenGenreDbForm] = useState<boolean>(false);
     
     const [animeId, setAnimeId] = useState<string>("");
     const [animeTitle, setAnimeTitle] = useState<string>("");
@@ -149,6 +151,14 @@ export default function Chatbox() {
 
     const handleCloseTagDbForm = () => {
         setOpenTagDbForm(false);
+    }
+
+    const handleOpenGenreDbForm = () => {
+        setOpenGenreDbForm(true);
+    }
+
+    const handleCloseGenreDbForm = () => {
+        setOpenGenreDbForm(false);
     }
 
     function AddMessageToList(message: React.JSX.Element) {
@@ -309,11 +319,25 @@ export default function Chatbox() {
 
     function AddAiRequestTagDatabaseToMessageList() {
         AddMessageToList(
-            <AiRequestTagDatabaseToMessageList
+            <AiRequestOpenDatabaseToMessageList
                 key={ "TagDbRequest" + RandomId() }
+                header={OPEN_TAGS_DB}
                 createdAt={Now()}
                 onOpenButtonClicked={() => {
                     handleOpenTagDbForm();
+                }}
+            />
+        );
+    }
+
+    function AddAiRequestGenreDatabaseToMessageList() {
+        AddMessageToList(
+            <AiRequestOpenDatabaseToMessageList
+                key={ "GenreDbRequest" + RandomId() }
+                header={OPEN_GENRES_DB}
+                createdAt={Now()}
+                onOpenButtonClicked={() => {
+                    handleOpenGenreDbForm();
                 }}
             />
         );
@@ -421,10 +445,18 @@ export default function Chatbox() {
                         EnableSendButton();
                     }}
 
-                    onInputEqualsTags={() => {
+                    onInputEqualsTag={() => {
                         DisableSendButton();
                         AddUserMessageboxToMessageList();
                         AddAiRequestTagDatabaseToMessageList();
+                        ResetInput();
+                        EnableSendButton();
+                    }}
+
+                    onInputEqualsGenre={() => {
+                        DisableSendButton();
+                        AddUserMessageboxToMessageList();
+                        AddAiRequestGenreDatabaseToMessageList();
                         ResetInput();
                         EnableSendButton();
                     }}
@@ -535,10 +567,16 @@ export default function Chatbox() {
             />
 
             <TagDbForm 
-                openViewForm={openTagDbForm}
+                openTagDbForm={openTagDbForm}
                 onCloseButtonClicked={() => {
-                    setChatboxState(ChatboxState.IDLE);
                     handleCloseTagDbForm();
+                }}
+            />
+
+            <GenreDbForm
+                openGenreDbForm={openGenreDbForm}
+                onCloseButtonClicked={() => {
+                    handleCloseGenreDbForm();
                 }}
             />
         </Box>

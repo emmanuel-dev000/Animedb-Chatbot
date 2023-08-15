@@ -6,14 +6,22 @@ export function IsInputNotEqualsToAnyCommand(input: string) {
         && !IsInputEqualsEdit(input)
         && !IsInputEqualsAdd(input) 
         && !IsInputEqualsShow(input)
-        && !IsInputEqualsTags(input);
+        && !IsInputEqualsTag(input)
+        && !IsInputEqualsGenre(input);
 }
 
-export function IsInputEqualsTags(input: string) {
+export function IsInputEqualsTag(input: string) {
     return input.includes("Tag")
         || input.includes("tag")
         || input.includes("Tags")
         || input.includes("tags");
+}
+
+export function IsInputEqualsGenre(input: string) {
+    return input.includes("Genre")
+        || input.includes("genre")
+        || input.includes("Genres")
+        || input.includes("genres");
 }
 
 export function IsInputEqualsEdit(input: string) {

@@ -2,14 +2,14 @@ import { Card, CardHeader, CardContent, Typography, Button, CardActions } from "
 import { AvatarType } from "../../../../types/enums";
 import AvatarEmoji from "../../ai/AvatarEmoji";
 import { CHATBOT_NAME } from "../../ai/chatbotname";
-import { OPEN_TAGS_DB } from "../../ai/messages";
 
 interface Props {
     createdAt: string;
+    header: string;
     onOpenButtonClicked: () => void;
 }
 
-export default function AiRequestTagDatabaseToMessageList({ ...props } : Props) {
+export default function AiRequestOpenDatabaseToMessageList({ ...props } : Props) {
     return (
         <Card
             sx={{
@@ -29,14 +29,14 @@ export default function AiRequestTagDatabaseToMessageList({ ...props } : Props) 
                     sx={{
                         wordWrap: "break-word",
                     }}>
-                    { OPEN_TAGS_DB }
+                    { props.header }
                 </Typography>
                 <Button
                     variant="contained"
                     onClick={() => {
                         props.onOpenButtonClicked();
                     }}>
-                    Open 💾
+                    Open 📬
                 </Button>
             </CardContent>
             <CardActions>

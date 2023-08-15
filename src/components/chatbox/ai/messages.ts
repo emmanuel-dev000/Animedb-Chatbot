@@ -8,6 +8,7 @@ export const LIST_RETRIEVE_SUCCESS_MESSAGE = "Fresh from the database anime list
 export const LIST_UPDATED_SUCCESS_MESSAGE = "And here's the new anime list.";
 export const REQUEST_ADD_ANIME_MESSAGE = "Freshly delivered form.";
 export const OPEN_TAGS_DB = "Requesting for Tags Database?";
+export const OPEN_GENRES_DB = "Requesting for Genre Database?";
 
 const apologyList = [
     "I'm so sorry user, there's no command for that.",

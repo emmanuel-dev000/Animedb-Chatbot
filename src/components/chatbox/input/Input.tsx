@@ -1,5 +1,5 @@
 import { Paper, Stack, TextField } from "@mui/material";
-import { INPUT_LENGTH_MAX, IsInputEqualsList, IsInputEqualsDelete, IsInputEqualsEdit, IsInputEqualsAdd, IsInputEqualsShow, IsInputNotEqualsToAnyCommand, IsInputEqualsTags } from "./InputHandler";
+import { INPUT_LENGTH_MAX, IsInputEqualsList, IsInputEqualsDelete, IsInputEqualsEdit, IsInputEqualsAdd, IsInputEqualsShow, IsInputNotEqualsToAnyCommand, IsInputEqualsTag, IsInputEqualsGenre } from "./InputHandler";
 import Footer from "../Footer";
 import { SendButton } from "./SendButton";
 import React from "react";
@@ -16,7 +16,8 @@ interface InputProps {
     onInputEqualsAdd: () => void;
     onInputEqualsEdit: () => Promise<void>;
     onInputEqualsDelete: () => Promise<void>;
-    onInputEqualsTags: () => void;
+    onInputEqualsTag: () => void;
+    onInputEqualsGenre: () => void;
 }
 
 export default function Input({ ...props }: InputProps) {
@@ -87,8 +88,13 @@ export default function Input({ ...props }: InputProps) {
                             return;
                         }
 
-                        if (IsInputEqualsTags(props.input)) {
-                            props.onInputEqualsTags();
+                        if (IsInputEqualsTag(props.input)) {
+                            props.onInputEqualsTag();
+                            return;
+                        } 
+
+                        if (IsInputEqualsGenre(props.input)) {
+                            props.onInputEqualsGenre();
                             return;
                         } 
                     }} />

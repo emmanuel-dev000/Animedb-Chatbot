@@ -3,23 +3,23 @@ import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import BorderColorSharpIcon from '@mui/icons-material/BorderColorSharp';
 import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
 import { Spacing } from "../Spacing";
-import { Tag } from "../../../types/types";
+import { Genre } from "../../../types/types";
 import { useEffect, useState } from "react";
 import { TransitionProps } from "@mui/material/transitions";
 import React from "react";
-import { AddNewTag, DeleteTagById, EditTagById } from "../../../hooks/HttpTag";
 import axios from "axios";
+import { AddNewGenre, DeleteGenreById, EditGenreById } from "../../../hooks/HttpGenre";
 
 interface Props {
-    openTagDbForm: boolean;
+    openGenreDbForm: boolean;
     onCloseButtonClicked: () => void;
 }
 
-export default function TagDbForm({ ...props }: Props) {
+export default function GenreDbForm({ ...props }: Props) {
     return (
         <Slide
             direction="up"
-            in={props.openTagDbForm}
+            in={props.openGenreDbForm}
             mountOnEnter
             unmountOnExit>
 
@@ -55,24 +55,24 @@ function Header(props: Props) {
 }
 
 function Form() {
-    const [tagList, setTagList] = useState<Array<Tag>>([]);
+    const [genreList, setGenreList] = useState<Array<Genre>>([]);
 
-    const getTagList = () => {
-        axios.get("http://localhost:8080/api/v1/tags")
+    const getGenreList = () => {
+        axios.get("http://localhost:8080/api/v1/genres")
             .then(res => {
-                setTagList(res.data);
+                setGenreList(res.data);
         });
     }
     
     useEffect(() => {
-        console.log("http://localhost:8080/api/v1/tags");
-        getTagList();
+        console.log("http://localhost:8080/api/v1/genres");
+        getGenreList();
     }, []);
 
-    const handleGetTagList = () => getTagList();
+    const handleGetGenreList = () => getGenreList();
 
-    let tagCounter = 1;
-    const [tagSelected, setTagSelected] = useState<Tag>();
+    let genreCounter = 1;
+    const [genreSelected, setGenreSelected] = useState<Genre>();
 
     const [addSlideIn, setAddSlideIn] = useState<boolean>(false);
     const handleAddSlideIn = () => setAddSlideIn(true);
@@ -86,8 +86,8 @@ function Form() {
     const handleDeleteSlideIn = () => setDeleteSlideIn(true);
     const handleDeleteSlideOut = () => setDeleteSlideIn(false);
 
-    function ResetTagSelected() {
-        setTagSelected({ id: "", name: "" });
+    function ResetGenreSelected() {
+        setGenreSelected({ id: "", name: "" });
     }
 
     return <Box
@@ -99,10 +99,10 @@ function Form() {
 
             <Typography
                 sx={{
-                    fontSize: 42,
+                    fontSize: 38,
                     fontWeight: "bold",
                 }}>
-                TAGS DATABASE
+                GENRE DATABASE
             </Typography>
         <Spacing />
 
@@ -114,7 +114,7 @@ function Form() {
                         #
                     </TableCell>
                     <TableCell>
-                        Tag
+                        Genre
                     </TableCell>
                     <TableCell>
                         {/* EMPTY CELL to avoid broken line. */}
@@ -130,29 +130,29 @@ function Form() {
             </TableHead>
             <TableBody>
             {
-                tagList.map(tag => {
+                genreList.map(genre => {
                     return (
-                        tag && (
+                        genre && (
                             <TableRow
-                                key={ tag.id }
+                                key={ genre.id }
                                 >
                                 <TableCell>
-                                    { tagCounter++ }
+                                    { genreCounter++ }
                                 </TableCell>
                                 <TableCell
                                     onClick={() => {
-                                        console.log(tag.id + " " + tag.name);
+                                        console.log(genre.id + " " + genre.name);
                                     }}>
-                                    { tag.name }
+                                    { genre.name }
                                 </TableCell>
                                 <TableCell>
                                     <IconButton
                                         onClick={() => {
-                                            const tagToEdit: Tag ={
-                                                id: tag.id,
-                                                name: tag.name
+                                            const genreToEdit: Genre = {
+                                                id: genre.id,
+                                                name: genre.name
                                             }
-                                            setTagSelected(tagToEdit);
+                                            setGenreSelected(genreToEdit);
                                             handleEditSlideIn();
                                         }}>
                                         <BorderColorSharpIcon />
@@ -161,11 +161,11 @@ function Form() {
                                 <TableCell>
                                     <IconButton
                                         onClick={() => {
-                                            const tagToEdit: Tag ={
-                                                id: tag.id,
-                                                name: tag.name
+                                            const genreToEdit: Genre = {
+                                                id: genre.id,
+                                                name: genre.name
                                             }
-                                            setTagSelected(tagToEdit);
+                                            setGenreSelected(genreToEdit);
                                             handleDeleteSlideIn();
                                         }}>
                                         <DeleteSharpIcon />
@@ -182,28 +182,28 @@ function Form() {
                 addSlideIn, 
                 () => {
                     handleAddSlideOut();
-                    handleGetTagList();
+                    handleGetGenreList();
             })
         }
         { 
             EditPopup(
-                tagSelected,
+                genreSelected,
                 editSlideIn, 
                 () => {
                     handleEditSlideOut();
-                    ResetTagSelected();
-                    handleGetTagList();
+                    ResetGenreSelected();
+                    handleGetGenreList();
             })
         }
 
         {
             DeletePopup(
-                tagSelected,
+                genreSelected,
                 deleteSlideIn,
                 () => {
                     handleDeleteSlideOut();
-                    ResetTagSelected();
-                    handleGetTagList();
+                    ResetGenreSelected();
+                    handleGetGenreList();
                 }
             )
         }
@@ -225,7 +225,7 @@ function AddPopup(
     addSlideIn: boolean,
     handleAddSlideOut: () => void,
     ) {
-    const [newTagName, setNewTagName] = useState<string>();
+    const [newGenreName, setNewGenreName] = useState<string>();
     return(
         <Dialog
             open={addSlideIn}
@@ -234,18 +234,18 @@ function AddPopup(
             onClose={handleAddSlideOut}
         >
             <DialogTitle>
-                New Tag
+                New Genre
             </DialogTitle>
             <DialogContent>
                 <TextField
-                    placeholder="Enter tag's name"
+                    placeholder="Enter genre's name"
                     variant="standard"
-                    id="tagName"
+                    id="genreName"
                     sx={{
                         marginY: 1,
                     }}
                     onChange={(e) => {
-                        setNewTagName(e.target.value);
+                        setNewGenreName(e.target.value);
                     }}
                 />
                 <Typography
@@ -253,7 +253,7 @@ function AddPopup(
                     sx={{
                         fontSize: 12,
                     }}>
-                        Enter the new tag's name.
+                        Enter the new genre's name.
                 </Typography>
             </DialogContent>
             <DialogActions>
@@ -267,10 +267,10 @@ function AddPopup(
                 <Button
                     variant="contained"
                     onClick={async () => {
-                        if (!newTagName) return;
+                        if (!newGenreName) return;
 
-                        const newTagResponse = await AddNewTag({ name: newTagName });
-                        if (!newTagResponse) {
+                        const newGenreResponse = await AddNewGenre({ name: newGenreName });
+                        if (!newGenreResponse) {
                             alert("Error adding of tag");
                             return;
                         }
@@ -287,11 +287,11 @@ function AddPopup(
 }
 
 function EditPopup(
-    tag: Tag | undefined,
+    genre: Genre | undefined,
     editSlideIn: boolean,
     handleEditSlideOut: () => void,
     ) {
-    const [newTagName, setNewTagName] = useState<string>();
+    const [newGenreName, setNewGenreName] = useState<string>();
     return(
         <Dialog
             open={editSlideIn}
@@ -300,7 +300,7 @@ function EditPopup(
             onClose={handleEditSlideOut}
         >
             <DialogTitle>
-                { tag?.name }
+                { genre?.name }
             </DialogTitle>
             <DialogContent>
                 <TextField
@@ -311,7 +311,7 @@ function EditPopup(
                         marginY: 1,
                     }}
                     onChange={(e) => {
-                        setNewTagName(e.target.value);
+                        setNewGenreName(e.target.value);
                     }}
                 />
                 <Grid container>
@@ -329,7 +329,7 @@ function EditPopup(
                             fontSize: 12,
                             marginLeft: 0.5,
                         }}>
-                            { tag?.name }
+                            { genre?.name }
                     </Typography>
                 </Grid>
             </DialogContent>
@@ -344,15 +344,15 @@ function EditPopup(
                 <Button
                     variant="contained"
                     onClick={async () => {
-                        if (!tag?.id || !newTagName) return;
+                        if (!genre?.id || !newGenreName) return;
                         
-                        if (tag?.name === newTagName) {
+                        if (genre?.name === newGenreName) {
                             handleEditSlideOut();
                             return;
                         }
 
-                        const tagResponse = await EditTagById(tag.id, { name: newTagName });
-                        if (!tagResponse) {
+                        const genreResponse = await EditGenreById(genre.id, { name: newGenreName });
+                        if (!genreResponse) {
                             alert("Error adding of tag");
                             return;
                         }
@@ -369,7 +369,7 @@ function EditPopup(
 }
 
 function DeletePopup(
-    tag: Tag | undefined,
+    genre: Genre | undefined,
     deleteSlideIn: boolean,
     handleDeleteSlideOut: () => void,
     ) {
@@ -381,14 +381,14 @@ function DeletePopup(
             onClose={handleDeleteSlideOut}
         >
             <DialogTitle>
-               Delete { tag?.name } tag
+               Delete { genre?.name } genre?
             </DialogTitle>
             <DialogContent>
                 <Typography 
                     variant="body1"
                     gutterBottom
                 >
-                    Are you sure you want to delete the { tag?.name } tag?
+                    Are you sure you want to delete the { genre?.name } genre?
                 </Typography>
             </DialogContent>
             <DialogActions>
@@ -403,9 +403,9 @@ function DeletePopup(
                     color="error"
                     variant="contained"
                     onClick={async () => {
-                        if (!tag?.id || !tag.name) return;
+                        if (!genre?.id || !genre.name) return;
                         
-                        const tagResponse = await DeleteTagById(tag.id);
+                        const tagResponse = await DeleteGenreById(genre.id);
                         if (!tagResponse) {
                             alert("Error deleting tag");
                             return;
