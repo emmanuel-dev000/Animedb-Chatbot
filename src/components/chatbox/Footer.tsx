@@ -10,7 +10,7 @@ export default function Footer() {
                 sx={{
                     fontSize: 14,
                 }}>
-                Made by Emmanuel Pangan (July 2023)
+                v1 made by Emmanuel Pangan (July 2023)
             </Typography>
         </center>
     );
