@@ -19,7 +19,8 @@ export async function GetAllGenres() : Promise<Array<Genre>> {
 
 export async function AddNewGenre(newGenre: GenreRequest) : Promise<Genre> {
     const { data } = await
-        axios.post("http://localhost:8080/api/v1/genres", newGenre, {
+        // axios.post("http://localhost:8080/api/v1/genres", newGenre, {
+        axios.post("https://animedb-yksz.onrender.com/api/v1/genres", newGenre, {
             headers: {
                 "Content-Type": "application/json"
             }
@@ -29,7 +30,8 @@ export async function AddNewGenre(newGenre: GenreRequest) : Promise<Genre> {
 
 export async function EditGenreById(genreId: string, newGenre: GenreRequest) : Promise<Genre> {
     const { data } = await
-        axios.patch(`http://localhost:8080/api/v1/genres/${ genreId }`, newGenre, {
+        // axios.patch(`http://localhost:8080/api/v1/genres/${ genreId }`, newGenre, {
+        axios.patch(`https://animedb-yksz.onrender.com/api/v1/genres/${ genreId }`, newGenre, {
             headers: {
                 "Content-Type": "application/json"
             }
@@ -39,6 +41,7 @@ export async function EditGenreById(genreId: string, newGenre: GenreRequest) : P
 
 export async function DeleteGenreById(genreId: string) : Promise<string> {
     const { data } = await
-        axios.delete(`http://localhost:8080/api/v1/genres/${ genreId }`);
+        // axios.delete(`http://localhost:8080/api/v1/genres/${ genreId }`);
+        axios.delete(`https://animedb-yksz.onrender.com/api/v1/genres/${ genreId }`);
     return data;
 }
