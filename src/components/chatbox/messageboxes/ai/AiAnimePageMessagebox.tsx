@@ -75,6 +75,7 @@ export default function AiAnimePageMessagebox({ ...props }: AiAnimePageMessagebo
                     hidePrevButton={true}
                     hideNextButton={true}
                     onChange={(e, page) => {
+                        console.log(e.cancelable); // To avoid linting error: Unused Variable.
                         setPageNumber(page - 1);
                     }}
                 />
