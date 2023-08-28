@@ -21,7 +21,8 @@ export default function AiAnimePageMessagebox({ ...props }: AiAnimePageMessagebo
     const [animePage, setAnimePage] = useState<AnimePage>();
     const DEFAULT_PAGE_SIZE = 5;
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/v1/anime/?pageNumber=${ pageNumber }&pageSize=${ DEFAULT_PAGE_SIZE }`)
+        // axios.get(`http://localhost:8080/api/v1/anime/?pageNumber=${ pageNumber }&pageSize=${ DEFAULT_PAGE_SIZE }`)
+        axios.get(`https://animedb-yksz.onrender.com/api/v1/anime/?pageNumber=${ pageNumber }&pageSize=${ DEFAULT_PAGE_SIZE }`)
             .then(res => {
                 setAnimePage(res.data);
             })
