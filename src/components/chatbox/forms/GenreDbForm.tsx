@@ -58,14 +58,16 @@ function Form() {
     const [genreList, setGenreList] = useState<Array<Genre>>([]);
 
     const getGenreList = () => {
-        axios.get("http://localhost:8080/api/v1/genres")
+        // axios.get("http://localhost:8080/api/v1/genres")
+        axios.get("https://animedb-yksz.onrender.com/api/v1/genres")
             .then(res => {
                 setGenreList(res.data);
         });
     }
     
     useEffect(() => {
-        console.log("http://localhost:8080/api/v1/genres");
+        // console.log("http://localhost:8080/api/v1/genres");
+        console.log("https://animedb-yksz.onrender.com/api/v1/genres");
         getGenreList();
     }, []);
 

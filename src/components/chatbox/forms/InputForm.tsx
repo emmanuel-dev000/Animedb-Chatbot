@@ -38,7 +38,8 @@ export default function InputForm({ ...props }: InputFormProps) {
     const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/v1/tags")
+        // axios.get("http://localhost:8080/api/v1/tags")
+        axios.get("https://animedb-yksz.onrender.com/api/v1/tags")
             .then(res => {
                 setTagList(res.data);
             });
@@ -48,7 +49,8 @@ export default function InputForm({ ...props }: InputFormProps) {
     const [selectedGenreList, setSelectedGenreList] = useState<Array<Genre>>([]);
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/v1/genres")
+        // axios.get("http://localhost:8080/api/v1/genres")
+        axios.get("https://animedb-yksz.onrender.com/api/v1/genres")
             .then(res => {
                 setGenreList(res.data);
             });

@@ -58,14 +58,16 @@ function Form() {
     const [tagList, setTagList] = useState<Array<Tag>>([]);
 
     const getTagList = () => {
-        axios.get("http://localhost:8080/api/v1/tags")
+        // axios.get("http://localhost:8080/api/v1/tags")
+        axios.get("https://animedb-yksz.onrender.com/api/v1/tags")
             .then(res => {
                 setTagList(res.data);
         });
     }
     
     useEffect(() => {
-        console.log("http://localhost:8080/api/v1/tags");
+        // console.log("http://localhost:8080/api/v1/tags");
+        console.log("https://animedb-yksz.onrender.com/api/v1/tags");
         getTagList();
     }, []);
 

@@ -64,8 +64,10 @@ export default function Chatbox() {
 
     useEffect(() => {
         if (animeId == null || animeId === "") return;
-        console.log(`http://localhost:8080/api/v1/anime/${ animeId }`);
-            axios.get(`http://localhost:8080/api/v1/anime/${ animeId }`)
+        // console.log(`http://localhost:8080/api/v1/anime/${ animeId }`);
+        console.log(`https://animedb-yksz.onrender.com/api/v1/anime/${ animeId }`);
+            // axios.get(`http://localhost:8080/api/v1/anime/${ animeId }`)
+            axios.get(`https://animedb-yksz.onrender.com/api/v1/anime/${ animeId }`)
                 .then(res => {
                     SetAnimeInputs(res.data)
                 })
@@ -73,8 +75,10 @@ export default function Chatbox() {
     }, [animeId]);
 
     useEffect(() => {
-        console.log("http://localhost:8080/api/v1/tags");
-        axios.get("http://localhost:8080/api/v1/tags")
+        // console.log("http://localhost:8080/api/v1/tags");
+        console.log("https://animedb-yksz.onrender.com/api/v1/tags");
+        // axios.get("http://localhost:8080/api/v1/tags")
+        axios.get("https://animedb-yksz.onrender.com/api/v1/tags")
             .then(res => {
                 setTagList(res.data);
             });
@@ -82,8 +86,10 @@ export default function Chatbox() {
 
     useEffect(() => {
         if (animeId == null || animeId === "") return;
-        console.log(`http://localhost:8080/api/v1/anime/${ animeId }/tags`);
-            axios.get(`http://localhost:8080/api/v1/anime/${ animeId }/tags`)
+        // console.log(`http://localhost:8080/api/v1/anime/${ animeId }/tags`);
+        console.log(`https://animedb-yksz.onrender.com/api/v1/anime/${ animeId }/tags`);
+            // axios.get(`http://localhost:8080/api/v1/anime/${ animeId }/tags`)
+            axios.get(`https://animedb-yksz.onrender.com/api/v1/anime/${ animeId }/tags`)
                 .then(res => {
                     setSelectedTagList(res.data);
                 })
@@ -91,8 +97,10 @@ export default function Chatbox() {
     }, [animeId]);
 
     useEffect(() => {
-        console.log("http://localhost:8080/api/v1/genres");
-        axios.get("http://localhost:8080/api/v1/genres")
+        // console.log("http://localhost:8080/api/v1/genres");
+        console.log("https://animedb-yksz.onrender.com/api/v1/genres");
+        // axios.get("http://localhost:8080/api/v1/genres")
+        axios.get("https://animedb-yksz.onrender.com/api/v1/genres")
             .then(res => {
                 setGenreList(res.data);
             });
@@ -100,8 +108,10 @@ export default function Chatbox() {
 
     useEffect(() => {
         if (animeId == null || animeId === "") return;
-        console.log(`http://localhost:8080/api/v1/anime/${ animeId }/genres`);
-            axios.get(`http://localhost:8080/api/v1/anime/${ animeId }/genres`)
+        // console.log(`http://localhost:8080/api/v1/anime/${ animeId }/genres`);
+        console.log(`https://animedb-yksz.onrender.com/api/v1/anime/${ animeId }/genres`);
+            // axios.get(`http://localhost:8080/api/v1/anime/${ animeId }/genres`)
+            axios.get(`https://animedb-yksz.onrender.com/api/v1/anime/${ animeId }/genres`)
                 .then(res => {
                     setSelectedGenreList(res.data);
                 })
